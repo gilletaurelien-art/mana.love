@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useProgression } from "@/app/ProgressionContext";
-import { useChatProvider } from "@/app/ChatProviderContext";
+import { useChatProvider, useChatStatus } from "@/app/ChatProviderContext";
 import { sortedPersonalities, getPersonality } from "@/domain/personalityRegistry";
 import type { ChatMessage, PersonalityConfig } from "@/domain/personalities";
 import type { ProviderReply } from "@/domain/chat";
@@ -23,6 +23,7 @@ function isPersonalityUnlocked(p: PersonalityConfig, balance: number): boolean {
 export default function ChatScreen() {
   const { balance, conversations } = useProgression();
   const provider = useChatProvider();
+  const { checked } = useChatStatus();
   const [params, setParams] = useSearchParams();
 
   const requestedId = params.get("avec");
@@ -123,8 +124,10 @@ export default function ChatScreen() {
               </div>
             ))}
         </div>
-        {provider.isLive ? (
-          <p className="tag tag--demo">Mode connecté</p>
+        {!checked ? (
+          <p className="tag">Vérification du serveur…</p>
+        ) : provider.isLive ? (
+          <p className="tag">Mistral · connecté</p>
         ) : (
           <p className="tag">Mode démo local</p>
         )}
@@ -146,12 +149,12 @@ export default function ChatScreen() {
           )}
         </header>
 
-        {!provider.isLive && (
+        {checked && !provider.isLive && (
           <div className="chat__demo-notice">
             <strong>Mode démonstration.</strong> Aucun fournisseur d'IA n'est
             configuré : les réponses de {active.name} sont générées par un
-            script local, clairement identifiées comme telles. Voir le README
-            pour brancher un vrai modèle côté serveur.
+            script local, clairement identifiées comme telles. Ajoutez
+            MISTRAL_API_KEY dans .env.local pour activer Mistral côté serveur.
           </div>
         )}
 

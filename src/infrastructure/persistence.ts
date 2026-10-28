@@ -7,23 +7,21 @@ import {
   REWARD_RULES_VERSION,
 } from "@/domain/progression";
 import type { ChatMessage, PersonalityId } from "@/domain/personalities";
-import type { Place, Experience } from "@/domain/exploration";
+import type { Coordinates, Place, Experience } from "@/domain/exploration";
 import { SAMPLE_PLACES, SAMPLE_EXPERIENCES } from "@/infrastructure/sampleExploreData";
+import { osmGeoService } from "@/infrastructure/osmExploreService";
 
 /**
- * Local persistence adapter. In this first version the browser's
- * localStorage is the only available storage, so it plays the role of a
- * (non-authoritative) client-side cache of the progression ledger and
- * conversation history. A future backend should own the authoritative
- * ledger server-side.
+ * Persistance locale. localStorage joue le rôle de cache client
+ * (non-autoritaire) pour le registre de progression, l'historique de
+ * conversations et les données d'exploration.
  */
 
 const KEYS = {
   ledger: "mana.love.ledger.v1",
-  balance: "mana.love.balance.v1",
   visited: "mana.love.visited.v1",
   conversations: "mana.love.conversations.v1",
-  lastExploreRoute: "mana.love.explore.lastRoute.v1",
+  lastCoords: "mana.love.explore.coords.v1",
 } as const;
 
 export interface Conversation {
@@ -46,11 +44,11 @@ function write(key: string, value: unknown): void {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch {
-    // storage full or unavailable — degradation is acceptable
+    // stockage plein ou indisponible — dégradation acceptable
   }
 }
 
-/** ---------------- Progression ledger ---------------- */
+/** ---------------- Registre de progression ---------------- */
 
 export function useLedger() {
   const [events, setEvents] = useState<RewardEvent[]>(() =>
@@ -62,10 +60,6 @@ export function useLedger() {
     write(KEYS.ledger, events);
   }, [events]);
 
-  /**
-   * Attempts to add a reward event with idempotency + daily caps.
-   * Returns the outcome so callers can reflect it honestly in the UI.
-   */
   function reward(
     action: RewardableAction,
     eventId: string,
@@ -150,28 +144,139 @@ export function useConversations() {
   };
 }
 
-/** ---------------- Explore ---------------- */
+/** ---------------- Exploration ---------------- */
+
+export type ExploreSource = "openstreetmap" | "sample";
 
 export interface ExploreData {
   places: readonly Place[];
   experiences: readonly Experience[];
+  source: ExploreSource;
+  locality: string | null;
+  loading: boolean;
+  error: string | null;
 }
 
-export function useExploreData(): { data: ExploreData; loading: boolean } {
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<ExploreData>({
-    places: [],
-    experiences: [],
-  });
+const EMPTY_DATA: ExploreData = {
+  places: [],
+  experiences: [],
+  source: "sample",
+  locality: null,
+  loading: true,
+  error: null,
+};
+
+/**
+ * Récupère des lieux réels autour de l'utilisateur (OSM) ; bascule
+ * explicitement sur les données de démonstration en cas d'absence de
+ * géolocalisation ou d'échec — toujours clairement étiqueté.
+ */
+export function useExploreData(): ExploreData & {
+  useRealLocation: () => void;
+  realLocation: boolean;
+} {
+  const [data, setData] = useState<ExploreData>(EMPTY_DATA);
+  const [realLocation, setRealLocation] = useState(false);
+  const [requested, setRequested] = useState(false);
 
   useEffect(() => {
-    // Simulates an async fetch boundary for future real services.
-    const t = setTimeout(() => {
-      setData({ places: SAMPLE_PLACES, experiences: SAMPLE_EXPERIENCES });
-      setLoading(false);
-    }, 250);
-    return () => clearTimeout(t);
-  }, []);
+    if (!requested) {
+      // Tant que l'utilisateur n'a pas demandé la géolocalisation :
+      // données de démonstration, sans appel réseau.
+      const t = setTimeout(() => {
+        setData({
+          places: SAMPLE_PLACES,
+          experiences: SAMPLE_EXPERIENCES,
+          source: "sample",
+          locality: null,
+          loading: false,
+          error: null,
+        });
+      }, 200);
+      return () => clearTimeout(t);
+    }
+  }, [requested]);
 
-  return { data, loading };
+  useEffect(() => {
+    if (!requested) return;
+    let cancelled = false;
+
+    function load(coords: Coordinates) {
+      write(KEYS.lastCoords, coords);
+      Promise.all([
+        osmGeoService.nearbyPlaces(coords),
+        osmGeoService.reverseGeocode(coords),
+      ])
+        .then(([places, locality]) => {
+          if (cancelled) return;
+          setData({
+            places,
+            experiences: SAMPLE_EXPERIENCES,
+            source: "openstreetmap",
+            locality,
+            loading: false,
+            error: null,
+          });
+        })
+        .catch((err: unknown) => {
+          if (cancelled) return;
+          setData({
+            places: SAMPLE_PLACES,
+            experiences: SAMPLE_EXPERIENCES,
+            source: "sample",
+            locality: null,
+            loading: false,
+            error:
+              err instanceof Error
+                ? `Lieux réels indisponibles : ${err.message}`
+                : "Lieux réels indisponibles.",
+          });
+        });
+    }
+
+    const start = () =>
+      navigator.geolocation.getCurrentPosition(
+      (pos) =>
+        load({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      (err) => {
+        if (cancelled) return;
+        setData({
+          places: SAMPLE_PLACES,
+          experiences: SAMPLE_EXPERIENCES,
+          source: "sample",
+          locality: null,
+          loading: false,
+          error: `Géolocalisation refusée ou indisponible (${err.message}). Contenu de démonstration affiché.`,
+        });
+      },
+        { timeout: 10_000, maximumAge: 300_000 }
+      );
+
+    Promise.resolve().then(() => {
+      if (cancelled) return;
+      setData((d) => ({ ...d, loading: true, error: null }));
+      start();
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [requested]);
+
+  return {
+    ...data,
+    realLocation,
+    useRealLocation: () => {
+      if (typeof navigator !== "undefined" && !navigator.geolocation) {
+        setData({
+          ...EMPTY_DATA,
+          loading: false,
+          error: "La géolocalisation n'est pas disponible sur cet appareil.",
+        });
+        return;
+      }
+      setRealLocation(true);
+      setRequested(true);
+    },
+  };
 }

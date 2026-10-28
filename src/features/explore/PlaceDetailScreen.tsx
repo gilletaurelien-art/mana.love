@@ -6,12 +6,12 @@ import "./explore.css";
 
 export default function PlaceDetailScreen() {
   const { placeId } = useParams<{ placeId: string }>();
-  const { data, loading } = useExploreData();
-  const { toggleVisited } = useVisitedPlaces();
-  const { visited } = useProgression();
+  const { places, source, loading, error } = useExploreData();
+  const { visited, toggleVisited } = useVisitedPlaces();
   const { reward } = useProgression();
 
-  const place = data.places.find((p) => p.id === placeId);
+  const place = places.find((p) => p.id === placeId);
+  const isSample = source === "sample";
 
   useEffect(() => {
     if (!place) return;
@@ -32,7 +32,9 @@ export default function PlaceDetailScreen() {
     return (
       <div className="stack stack-4">
         <h1>Lieu introuvable</h1>
-        <p className="muted">Ce lieu n'existe pas ou n'est plus disponible.</p>
+        <p className="muted">
+          {error ?? "Ce lieu n'existe pas ou n'est plus disponible."}
+        </p>
         <Link to="/explorer" className="btn btn-secondary">
           ← Retour à l'exploration
         </Link>
@@ -50,30 +52,41 @@ export default function PlaceDetailScreen() {
         </Link>
       </nav>
       <header className="explore-detail__header">
-        <p className="eyebrow">{place.region}</p>
+        <p className="eyebrow">{place.region || "OpenStreetMap"}</p>
         <h1>{place.name}</h1>
       </header>
 
-      <div className="demo-banner" role="note">
-        <span aria-hidden="true">✦</span>
-        <p>
-          <strong>Fiche de démonstration.</strong> Aucune information réelle
-          (adresse, horaires, accès) n'est affichée : elle le sera quand les
-          sources de données géographiques seront intégrées.
-        </p>
-      </div>
+      {isSample ? (
+        <div className="demo-banner" role="note">
+          <span aria-hidden="true">✦</span>
+          <p>
+            <strong>Fiche de démonstration.</strong> Aucune information réelle
+            (adresse, horaires, accès) n'est affichée.
+          </p>
+        </div>
+      ) : (
+        <div className="notice notice--info" role="status">
+          <strong>Lieu réel</strong> — données © OpenStreetMap contributors
+          (ODbL).
+          {place.location
+            ? ` Coordonnées : ${place.location.lat.toFixed(4)}, ${place.location.lng.toFixed(4)}.`
+            : ""}
+        </div>
+      )}
 
       <p className="lead">{place.summary}</p>
       <p className="muted">{place.description}</p>
 
-      <section aria-label="Moments recommandés" className="explore-detail__section">
-        <h2>Bons moments</h2>
-        <ul className="cluster">
-          {place.bestMoments.map((m) => (
-            <li key={m} className="tag">{m}</li>
-          ))}
-        </ul>
-      </section>
+      {place.bestMoments.length > 0 && (
+        <section aria-label="Moments recommandés" className="explore-detail__section">
+          <h2>Bons moments</h2>
+          <ul className="cluster">
+            {place.bestMoments.map((m) => (
+              <li key={m} className="tag">{m}</li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section aria-label="Actions" className="explore-detail__section">
         <h2>Et maintenant ?</h2>

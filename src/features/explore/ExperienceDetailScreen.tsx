@@ -6,10 +6,10 @@ import "./explore.css";
 
 export default function ExperienceDetailScreen() {
   const { experienceId } = useParams<{ experienceId: string }>();
-  const { data, loading } = useExploreData();
+  const { experiences, loading } = useExploreData();
   const { reward } = useProgression();
 
-  const experience = data.experiences.find((e) => e.id === experienceId);
+  const experience = experiences.find((e) => e.id === experienceId);
 
   useEffect(() => {
     if (!experience) return;

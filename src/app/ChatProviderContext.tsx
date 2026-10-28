@@ -1,25 +1,67 @@
-import { createContext, useContext, useMemo, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import type { ChatProvider } from "@/domain/chat";
 import { demoChatProvider } from "@/infrastructure/demoChatProvider";
+import { createLiveChatProvider } from "@/infrastructure/liveChatProvider";
 
 /**
- * Chooses the active chat provider.
- * The live provider activates only when the server exposes the AI route
- * (checked at startup via /api/health). Until then, the demo provider is used
- * and clearly labeled in the UI.
+ * Choisit le fournisseur de conversation actif :
+ * - si le serveur répond /api/health avec aiConfigured=true → Mistral via /api/chat ;
+ * - sinon → mode démo local, clairement identifié dans l'UI.
  */
+const liveProvider = createLiveChatProvider({ endpoint: "/api/chat" });
 
 const ChatProviderContext = createContext<ChatProvider>(demoChatProvider);
+const ChatStatusContext = createContext<{
+  aiConfigured: boolean;
+  checked: boolean;
+}>({ aiConfigured: false, checked: false });
 
 export function ChatProviderProvider({ children }: { children: ReactNode }) {
-  const provider = useMemo(() => demoChatProvider, []);
+  const [aiConfigured, setAiConfigured] = useState(false);
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/health")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { aiConfigured?: boolean } | null) => {
+        if (cancelled) return;
+        setAiConfigured(Boolean(data?.aiConfigured));
+        setChecked(true);
+      })
+      .catch(() => {
+        if (!cancelled) setChecked(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const provider = useMemo(
+    () => (aiConfigured ? liveProvider : demoChatProvider),
+    [aiConfigured]
+  );
+
   return (
-    <ChatProviderContext.Provider value={provider}>
-      {children}
-    </ChatProviderContext.Provider>
+    <ChatStatusContext.Provider value={{ aiConfigured, checked }}>
+      <ChatProviderContext.Provider value={provider}>
+        {children}
+      </ChatProviderContext.Provider>
+    </ChatStatusContext.Provider>
   );
 }
 
 export function useChatProvider(): ChatProvider {
   return useContext(ChatProviderContext);
+}
+
+export function useChatStatus(): { aiConfigured: boolean; checked: boolean } {
+  return useContext(ChatStatusContext);
 }

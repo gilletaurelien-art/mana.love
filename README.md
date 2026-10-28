@@ -30,6 +30,10 @@ pour l'instant.
 ## Architecture
 
 ```
+server/            Routes API côté serveur (plugin Vite en dev)
+  index.ts              /api/health, montage des routes
+  chat.ts               /api/chat → proxy Mistral (clé jamais exposée)
+  geo.ts                /api/places/nearby (Overpass), /api/geo/reverse (Nominatim)
 src/
   domain/           Logique métier pure, sans dépendance UI
     personalities.ts     Contrats des personnalités / messages
@@ -38,11 +42,13 @@ src/
     exploration.ts       Contrats lieux / expériences / géo (futur)
     audio.ts             Contrats catalogue & lecture audio (futur)
     chat.ts              Contrat fournisseur IA
+    systemPrompt.ts      Construction du prompt système (utilisé côté serveur)
   infrastructure/   Adaptateurs
     persistence.ts       Cache local (localStorage) — non-autoritaire
     demoChatProvider.ts  Mode démo clairement identifié
     liveChatProvider.ts  Fournisseur serveur (routes /api)
     sampleExploreData.ts Données de démonstration (séparées de la prod)
+    osmExploreService.ts Client des routes /api (Overpass/Nominatim proxifiés)
     radioCatalog.ts      Catalogue radio (aucun contenu sous licence)
   app/              Contextes React (progression, fournisseur chat)
   components/       Coquille applicative (TopBar, MobileNav, Footer…)
@@ -83,36 +89,79 @@ s'ouvrent sur des surfaces plus claires sans perdre la signature MANA.
   MANAradio (catalogue, lecture honnêtement indisponible).
 - Confidentialité : page dédiée avec suppression réelle des données locales.
 
+**Réel et fonctionnel avec configuration :**
+
+- Conversation **Mistral** : dès que `MISTRAL_API_KEY` est définie dans
+  `.env.local`, les réponses viennent du modèle (prompt système avec
+  garde-fous éthiques, construit côté serveur).
+- Exploration **OpenStreetMap** : lieux naturels réels autour de
+  l'utilisateur (Overpass) + localité (Nominatim), attributions ODbL.
+
 **Démonstration (clairement identifiée dans l'UI) :**
 
-- Réponses de conversation : **mode démo local**, jamais présenté comme une
-  sortie de modèle réelle (bannière visible dans l'écran de conversation).
-- Contenu d'exploration : exemples illustratifs, **aucune donnée géographique
-  réelle** (pas de coordonnées, horaires, itinéraires).
+- Réponses de conversation sans clé : **mode démo local**, jamais présenté
+  comme une sortie de modèle réelle (bannière visible).
+- Contenu d'exploration sans géolocalisation : exemples illustratifs,
+  **aucune donnée géographique réelle** (pas de coordonnées, horaires,
+  itinéraires).
 - Catalogue radio : entrées sans ressource audio — aucun contenu sous licence
   n'est diffusé.
 
+## Intégrations configurées
+
+### Mistral (conversation) — branché, activé par clé
+
+La conversation passe par la route serveur `/api/chat` qui proxifie
+l'API Mistral. Sans `MISTRAL_API_KEY`, l'application bascule
+automatiquement et honnêtement en **mode démo local** (bannière visible
+dans l'écran de conversation) ; avec la clé, le badge « Mistral · connecté »
+s'affiche et les réponses viennent du modèle.
+
+```bash
+cp .env.example .env.local
+# éditez .env.local : MISTRAL_API_KEY=... (optionnel : MISTRAL_MODEL)
+npm run dev
+```
+
+- La clé est lue **côté serveur uniquement** (`server/chat.ts`) ; le
+  navigateur ne la voit jamais.
+- Le prompt système est reconstruit côté serveur depuis le registre de
+  personnalités (`src/domain/systemPrompt.ts`), avec les garde-fous
+  éthiques (pas de jalousie, pas de pression, rappel que MANA est une IA).
+- `MISTRAL_API_KEY` est requise ; `MISTRAL_MODEL` est optionnelle
+  (défaut : `mistral-small-latest`).
+
+### OpenStreetMap (exploration) — branché, sur demande utilisateur
+
+L'exploration propose deux sources, clairement étiquetées :
+
+- **Contenu de démonstration** (défaut) : fiches illustratives, aucune
+  donnée réelle.
+- **Lieux réels autour de vous** : au clic sur « Découvrir des lieux réels
+  autour de moi », le navigateur demande la géolocalisation, puis les
+  routes serveur interrogent **Overpass API** (POI nature/parcs/belvédères
+  dans un rayon de 3 km) et **Nominatim** (localité). Attributions
+  « © OpenStreetMap contributors (ODbL) » affichées.
+
+Le proxy serveur (`server/geo.ts`) impose un User-Agent conforme à la
+politique OSM, met en cache 10 minutes, et valider/normalise les
+résultats. Aucune donnée de localisation n'est stockée : les coordonnées
+restent en mémoire le temps de la requête.
+
 ## Intégrations en attente
 
-Aucune de ces intégrations n'est branchée ; les frontières sont déjà en
-place côté domaine :
-
-1. **Fournisseur IA (ex. Mistral)** — `src/domain/chat.ts` définit le
-   contrat `ChatProvider` ; `src/infrastructure/liveChatProvider.ts` appelle
-   une route serveur `/api/chat` qui construirait le prompt système
-   (`buildSystemPrompt` déjà implémenté). Les clés restent côté serveur,
-   jamais dans le front. Variables attendues : `MISTRAL_API_KEY`,
-   éventuellement `MISTRAL_MODEL`.
-2. **Données géographiques (PostGIS, Valhalla, POI)** — le contrat
-   `GeoService` (`src/domain/exploration.ts`) attend reverse-geocoding et
-   estimation d'itinéraire.
-3. **Audio (voix, paysages sonores)** — `src/domain/audio.ts` définit
+1. **Routing pédestre (Valhalla/OSRM)** — `GeoService.estimateRouteTime`
+   existe mais renvoie `null` ; l'UI n'affiche donc aucun temps de trajet.
+2. **Audio (voix, paysages sonores)** — `src/domain/audio.ts` définit
    `AudioCatalog` / `AudioPlayer` ; le catalogue radio reste vide tant que
    les droits ne sont pas établis.
-4. **Backend de progression autoritaire** — le registre est aujourd'hui un
+3. **Backend de progression autoritaire** — le registre est aujourd'hui un
    cache client ; le serveur devra valider les récompenses
    (idempotence, plafonds, déblocages atomiques) et servir de source de
    vérité.
+4. **Serveur de production** — les routes `/api/*` sont servies par le
+   plugin Vite en développement ; en production, il faut un runtime Node
+   équivalent qui réutilise `server/chat.ts` et `server/geo.ts`.
 
 ## Points MANA — règles
 
@@ -134,6 +183,12 @@ personnalité n'est jamais réutilisé pour une autre sans accord explicite.
 
 ## Variables d'environnement
 
-Aucune n'est requise pour lancer la version actuelle. Les futures clés
-(`MISTRAL_API_KEY`, etc.) seront lues **côté serveur uniquement** —
-`.env` est ignoré par git ; utilisez `.env.example` comme documentation.
+Voir `.env.example`. Une seule variable active une intégration :
+
+| Variable          | Effet                                                       |
+| ----------------- | ----------------------------------------------------------- |
+| `MISTRAL_API_KEY` | Active Mistral pour la conversation (lue côté serveur)      |
+| `MISTRAL_MODEL`   | Modèle à utiliser (défaut : `mistral-small-latest`)        |
+
+Sans clé, l'application est pleinement utilisable en mode démo. `.env` et
+`.env.local` sont ignorés par git ; ne committez jamais de clé.

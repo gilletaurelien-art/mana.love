@@ -5,7 +5,15 @@ import type { Place, Experience } from "@/domain/exploration";
 import "./explore.css";
 
 export default function ExploreScreen() {
-  const { data, loading } = useExploreData();
+  const {
+    places,
+    experiences,
+    source,
+    locality,
+    loading,
+    error,
+    useRealLocation,
+  } = useExploreData();
   const [query, setQuery] = useState("");
 
   if (loading) {
@@ -22,16 +30,17 @@ export default function ExploreScreen() {
   }
 
   const q = query.trim().toLowerCase();
-  const places = q
-    ? data.places.filter((p) =>
+  const filteredPlaces = q
+    ? places.filter((p) =>
         [p.name, p.region, ...p.tags].join(" ").toLowerCase().includes(q)
       )
-    : data.places;
-  const experiences = q
-    ? data.experiences.filter((e) =>
+    : places;
+  const filteredExperiences = q
+    ? experiences.filter((e) =>
         [e.title, ...e.tags].join(" ").toLowerCase().includes(q)
       )
-    : data.experiences;
+    : experiences;
+  const isOsm = source === "openstreetmap";
 
   return (
     <div className="explore">
@@ -44,16 +53,36 @@ export default function ExploreScreen() {
         </p>
       </div>
 
-      <div className="demo-banner" role="note">
-        <span aria-hidden="true">✦</span>
-        <p>
-          <strong>Contenu de démonstration.</strong> Les fiches ci-dessous sont
-          des exemples illustratifs : elles ne contiennent ni localisation, ni
-          horaires, ni itinéraires réels. Les services géographiques (cartes,
-          POI, routing) seront intégrés dans une prochaine version — voir le
-          README.
+      {isOsm ? (
+        <div className="notice notice--info" role="status">
+          <strong>Lieux réels autour de vous</strong>
+          {locality ? ` — proche de ${locality}.` : "."} Données ©
+          OpenStreetMap contributors (ODbL).
+        </div>
+      ) : (
+        <div className="demo-banner" role="note">
+          <span aria-hidden="true">✦</span>
+          <div className="stack stack-3">
+            <p>
+              <strong>Contenu de démonstration.</strong> Les fiches
+              ci-dessous sont des exemples illustratifs : elles ne
+              contiennent ni localisation, ni horaires, ni itinéraires
+              réels.
+            </p>
+            <p>
+              <button className="btn btn-secondary btn-sm" onClick={useRealLocation}>
+                Découvrir des lieux réels autour de moi (OpenStreetMap)
+              </button>
+            </p>
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <p className="notice" role="alert">
+          {error}
         </p>
-      </div>
+      )}
 
       <div className="explore__search">
         <label htmlFor="explore-search" className="field-label">
@@ -70,12 +99,18 @@ export default function ExploreScreen() {
       </div>
 
       <section aria-labelledby="places-heading">
-        <h2 id="places-heading" className="explore__section-title">Lieux à découvrir</h2>
-        {places.length === 0 ? (
-          <p className="notice">Aucun lieu ne correspond à cette recherche.</p>
+        <h2 id="places-heading" className="explore__section-title">
+          Lieux à découvrir {isOsm && <span className="tag">OpenStreetMap</span>}
+        </h2>
+        {filteredPlaces.length === 0 ? (
+          <p className="notice">
+            {isOsm
+              ? "Aucun lieu naturel trouvé dans un rayon de 3 km. Élargissez votre recherche ou explorez une autre zone."
+              : "Aucun lieu ne correspond à cette recherche."}
+          </p>
         ) : (
           <ul className="explore__grid">
-            {places.map((p) => (
+            {filteredPlaces.map((p) => (
               <li key={p.id}>
                 <PlaceCard place={p} />
               </li>
@@ -86,11 +121,11 @@ export default function ExploreScreen() {
 
       <section aria-labelledby="exp-heading">
         <h2 id="exp-heading" className="explore__section-title">Expériences à vivre</h2>
-        {experiences.length === 0 ? (
+        {filteredExperiences.length === 0 ? (
           <p className="notice">Aucune expérience ne correspond à cette recherche.</p>
         ) : (
           <ul className="explore__grid">
-            {experiences.map((e) => (
+            {filteredExperiences.map((e) => (
               <li key={e.id}>
                 <ExperienceCard experience={e} />
               </li>
@@ -111,7 +146,7 @@ function PlaceCard({ place }: { place: Place }) {
       <span className={`explore-card__pict kind-${place.kind}`} aria-hidden="true" />
       <span className="explore-card__body">
         <strong className="explore-card__title">{place.name}</strong>
-        <span className="quiet">{place.region}</span>
+        <span className="quiet">{place.region || "OpenStreetMap"}</span>
         <span className="explore-card__summary">{place.summary}</span>
       </span>
     </Link>
