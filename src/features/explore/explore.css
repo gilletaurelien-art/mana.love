@@ -1,0 +1,103 @@
+.explore {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+
+.explore__search {
+  max-width: 520px;
+}
+
+.explore__section-title {
+  font-size: var(--fs-h3);
+  margin-bottom: var(--sp-3);
+}
+
+.explore__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sp-3);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .explore__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.explore-card {
+  display: flex;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+  text-decoration: none;
+  color: var(--c-ink-high);
+  min-height: 120px;
+}
+
+.explore-card__pict {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--r-md);
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font-size: 1.3rem;
+  border: 1px solid rgba(169, 199, 197, 0.18);
+}
+
+.kind-landscape { background: linear-gradient(135deg, #2e4a3c, #16241d); }
+.kind-water { background: linear-gradient(135deg, #274b52, #12262b); }
+.kind-path { background: linear-gradient(135deg, #4a3a24, #20180d); }
+.kind-garden { background: linear-gradient(135deg, #37452a, #161d0f); }
+.kind-viewpoint { background: linear-gradient(135deg, #3c3552, #171225); }
+.kind-experience { background: linear-gradient(135deg, var(--c-night-700), var(--c-night-800)); }
+
+.explore-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+
+.explore-card__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h4);
+}
+
+.explore-card__summary {
+  color: var(--c-ink-mid);
+  font-size: var(--fs-small);
+}
+
+/* ---------- Detail ---------- */
+.explore-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.explore-detail__back {
+  text-decoration: none;
+}
+
+.explore-detail__header h1 {
+  margin-top: var(--sp-2);
+}
+
+.explore-detail__section {
+  padding-top: var(--sp-4);
+  border-top: 1px solid rgba(169, 199, 197, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.explore-detail__section h2 {
+  font-size: var(--fs-h4);
+  font-family: var(--font-body);
+  font-weight: 600;
+}
