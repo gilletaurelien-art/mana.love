@@ -16,6 +16,11 @@ export interface ChatMessage {
 
 export type PersonalityId = string;
 
+// réexporté pour le contrat : chaque personnalité porte SON incarnation —
+// son visage ET son corps propres.
+import type { Incarnation } from "./avatar";
+export type { Incarnation };
+
 export type UnlockRequirement =
   | { kind: "free" }
   | { kind: "mana-points"; threshold: number };
@@ -40,6 +45,8 @@ export interface PersonalityConfig {
   theme: "mana" | "luna" | "selene" | "thalassa" | "eos";
   /** Base persona used to build the system prompt server-side. */
   characterTraits: string[];
+  /** Son incarnation : son visage ET son corps — une par personnalité. */
+  incarnation: Incarnation;
   unlock: UnlockRequirement;
   /** Stable sort order in the pantheon. */
   order: number;
