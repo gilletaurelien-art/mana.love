@@ -27,6 +27,7 @@ const ORIGINES_AUTORISEES = new Set([
   "https://api.mistral.ai", // côté SERVEUR uniquement (server/), jamais src/
   "https://overpass-api.de",
   "https://nominatim.openstreetmap.org",
+  "https://cdn.mana.bzh",   // CDN souverain du fondateur — avatars .vrm (relevé 28/10/2026)
 ]);
 
 const MOTS_INTERDITS = ["supabase", "rpc("];
@@ -60,9 +61,13 @@ function extraireOrigines(contenu) {
 
 function estAutorisee(origine) {
   if (ORIGINES_AUTORISEES.has(origine)) return true;
+  // autorisation par ORIGINE (scheme + host + port), pas par URL exacte :
+  // une origine en liste blanche couvre tous ses chemins.
+  for (const autorisee of ORIGINES_AUTORISEES) {
+    if (origine.startsWith(autorisee + "/") || origine === autorisee) return true;
+  }
   // les chemins relatifs du même site sont légitimes (routes internes, assets)
   if (origine.startsWith("/") || origine.startsWith(".")) return true;
-  // les URL de tuiles OSM sont relayées par le serveur, pas appelées du client
   return false;
 }
 
