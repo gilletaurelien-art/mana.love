@@ -7,7 +7,7 @@ import {
   type LienLieu,
 } from "../canon";
 import { FIGURES } from "../figuresRegistry";
-import { avatarDeMANA, modeleParCle, CATALOGUE_AVATARS } from "../avatar";
+import { resoudreModele, INCARNATION_MANA, CATALOGUE_AVATARS } from "../avatar";
 
 describe("l'âme — direction éditoriale : le caractère de la déesse d'abord", () => {
   it("l'entête de l'âme existe et ouvre, avant les registres", () => {
@@ -92,11 +92,11 @@ describe("état éditorial réel — ne jamais supposer les 101", () => {
   });
 });
 
-describe("manifest d'avatar — protocole du 13/10", () => {
-  it("MANA a UN seul avatar, lu dans le catalogue, jamais deviné", () => {
-    const avatar = avatarDeMANA();
-    expect(avatar.cle).toBe("feline");
-    expect(avatar.url).toBe("https://cdn.mana.bzh/mana-f-v3.vrm");
+describe("manifest d'avatar — une incarnation par personnalité (décision 28/10)", () => {
+  it("MANA a SON avatar : FÉLINE, lu dans le catalogue, jamais deviné", () => {
+    const modele = resoudreModele(INCARNATION_MANA);
+    expect(modele?.cle).toBe("feline");
+    expect(modele?.url).toBe("https://cdn.mana.bzh/mana-f-v3.vrm");
   });
 
   it("l'URL sans suffixe (404 mesuré) n'existe pas dans le catalogue", () => {
@@ -106,12 +106,19 @@ describe("manifest d'avatar — protocole du 13/10", () => {
     expect(urlsWithoutSuffix).toHaveLength(0);
   });
 
-  it("une clé inconnue ne retourne rien — pas de repli silencieux", () => {
-    expect(modeleParCle("mana-f")).toBeNull();
-    expect(modeleParCle("inconnu")).toBeNull();
+  it("une incarnation sans clé catalogue rend null — pas de repli silencieux sur un autre corps", () => {
+    expect(resoudreModele({ kind: "modele", cle: "mana-f" })).toBeNull();
+    expect(resoudreModele({ kind: "modele", cle: "inconnu" })).toBeNull();
   });
 
-  it("le catalogue ne contient pas 101 modèles — pas de carrousel", () => {
-    expect(CATALOGUE_AVATARS.length).toBeLessThan(10);
+  it("une incarnation en-stock (clé en attente) rend null honnêtement", () => {
+    const attente = { kind: "en-stock", note: "déesse : clé à lire dans le catalogue" } as const;
+    expect(resoudreModele(attente)).toBeNull();
+  });
+
+  it("pas de carrousel : personne ne choisit parmi 101 — chaque voix a LE sien", () => {
+    // le catalogue peut être grand (le stock mesuré), mais l'incarnation
+    // d'une personnalité est UNE clé, pas un choix ouvert
+    expect(INCARNATION_MANA.kind).toBe("modele");
   });
 });
