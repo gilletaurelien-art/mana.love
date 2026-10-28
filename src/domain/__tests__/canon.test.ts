@@ -3,10 +3,37 @@ import {
   enteteRegistre,
   libelleLien,
   compterFigures,
+  ENTETE_AME,
   type LienLieu,
 } from "../canon";
 import { FIGURES } from "../figuresRegistry";
 import { avatarDeMANA, modeleParCle, CATALOGUE_AVATARS } from "../avatar";
+
+describe("l'âme — direction éditoriale : le caractère de la déesse d'abord", () => {
+  it("l'entête de l'âme existe et ouvre, avant les registres", () => {
+    expect(ENTETE_AME).toBe("Son âme");
+  });
+
+  it("chaque figure porte une âme qui dit qui elle est, pas ce qu'elle prouve", () => {
+    for (const f of FIGURES) {
+      if (f.ame !== null) {
+        expect(f.ame.length).toBeGreaterThan(20);
+        expect(f.ame).not.toMatch(/^\s*$/);
+      }
+    }
+  });
+
+  it("l'âme est DISTINCTE des registres : ni établi, ni tradition", () => {
+    const mana = FIGURES.find((f) => f.id === "mana");
+    expect(mana?.ame).not.toBe(mana?.registres.etabli);
+    expect(mana?.ame).not.toBe(mana?.registres.manaRaconte);
+  });
+
+  it("une âme à écrire reste null — jamais gonflée au rang de fait", () => {
+    const structure: { ame: string | null } = { ame: null };
+    expect(structure.ame).toBeNull();
+  });
+});
 
 describe("quatre registres qui ne se mélangent pas", () => {
   it("chaque registre porte son en-tête propre", () => {

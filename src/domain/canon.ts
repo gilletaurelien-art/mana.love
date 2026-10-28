@@ -56,6 +56,14 @@ export interface Figure {
   /** Clé stable, JAMAIS réassignée (cassera silencieusement les choix sauvegardés). */
   id: string;
   nom: string;
+  /**
+   * L'ÂME de la déesse — direction éditoriale du fondateur (28/10/2026) :
+   * le discours s'oriente vers l'âme et le caractère de chaque figure.
+   * C'est la porte d'entrée de l'histoire, AVANT les registres : une à
+   * trois phrases qui disent qui elle est, pas ce qu'elle prouve.
+   * null = à écrire — jamais gonflé au rang de fait.
+   */
+  ame: string | null;
   /** Tradition d'origine (ex. « Sumer, ~3000 av. J.-C. ») — seulement si établi. */
   tradition: string | null;
   /** Section du canon (sur XV annoncées). */
@@ -84,6 +92,9 @@ export function enteteRegistre(registre: keyof Registres): string {
       return "Ce que nous en faisons aujourd'hui";
   }
 }
+
+/** L'en-tête de l'âme : la porte d'entrée, AVANT les registres. */
+export const ENTETE_AME = "Son âme";
 
 /** Libellé honnête d'un lien : « historique documenté » ou « rapprochement poétique ». */
 export function libelleLien(lien: LienLieu): string {

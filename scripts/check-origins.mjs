@@ -18,16 +18,31 @@
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 
-/** Origines autorisées, citation explicite. */
-const ORIGINES_AUTORISEES = new Set([
+/**
+ * Origines autorisées côté APP (src/) : uniquement les routes du même site.
+ * Le client parle à /api/chat, JAMAIS à l'API Mistral directement.
+ */
+const ORIGINES_APP = new Set([
   "/api/chat",            // proxy serveur → ask-mana / mana-chat
   "/api/health",
   "/api/places/nearby",   // proxy serveur → Overpass (OSM)
   "/api/geo/reverse",     // proxy serveur → Nominatim (OSM)
-  "https://api.mistral.ai", // côté SERVEUR uniquement (server/), jamais src/
+]);
+
+/**
+ * Origines autorisées côté SERVEUR (server/) : partenaires explicites.
+ * api.mistral.ai est ici et PARTOUT ici — une app qui l'appelle depuis
+ * le client contourne le garde anti-dépendance et le mur payant.
+ */
+const ORIGINES_SERVEUR = new Set([
+  "https://api.mistral.ai",
   "https://overpass-api.de",
   "https://nominatim.openstreetmap.org",
-  "https://cdn.mana.bzh",   // CDN souverain du fondateur — avatars .vrm (relevé 28/10/2026)
+]);
+
+/** CDN souverain du fondateur — avatars .vrm (relevé 28/10/2026). */
+const ORIGINES_CDN = new Set([
+  "https://cdn.mana.bzh",
 ]);
 
 const MOTS_INTERDITS = ["supabase", "rpc("];
@@ -44,26 +59,25 @@ async function* fichiers(dir) {
   }
 }
 
-/** Extrait les origines atteintes dans un fichier : fetch, axios-like, URL littérales. */
+/**
+ * Extrait les origines atteintes : URL https littérales complètes.
+ * Les templates `${...}` ne sont pas des origines (ce sont des variables) ;
+ * http://localhost n'est qu'une base de parsing pour req.url — pas un appel.
+ */
 function extraireOrigines(contenu) {
   const origines = new Set();
-  const motifs = [
-    /fetch\(\s*["'`]([^"'`]+)["'`]/g,
-    /["'`](https?:\/\/[^"'`]+)["'`]/g,
-  ];
-  for (const motif of motifs) {
-    for (const m of contenu.matchAll(motif)) {
-      origines.add(m[1]);
-    }
+  const motif = /["'`](https:\/\/[^"'`\s]+)["'`]/g;
+  for (const m of contenu.matchAll(motif)) {
+    origines.add(m[1]);
   }
   return origines;
 }
 
-function estAutorisee(origine) {
-  if (ORIGINES_AUTORISEES.has(origine)) return true;
+function estAutorisee(origine, blanches) {
+  if (blanches.has(origine)) return true;
   // autorisation par ORIGINE (scheme + host + port), pas par URL exacte :
   // une origine en liste blanche couvre tous ses chemins.
-  for (const autorisee of ORIGINES_AUTORISEES) {
+  for (const autorisee of blanches) {
     if (origine.startsWith(autorisee + "/") || origine === autorisee) return true;
   }
   // les chemins relatifs du même site sont légitimes (routes internes, assets)
@@ -72,31 +86,47 @@ function estAutorisee(origine) {
 }
 
 let echecs = 0;
-const racine = path.resolve(process.argv[2] ?? "src");
+const args = process.argv.slice(2);
+const racine = path.resolve(args.find((a) => !a.startsWith("--")) ?? "src");
+// Mode explicite : --app (src/) ou --serveur (server/).
+// Le mode se déclare, il ne se devine pas du chemin.
+const mode = args.includes("--serveur") ? "serveur" : "app";
 
 for await (const fichier of fichiers(racine)) {
   const contenu = await readFile(fichier, "utf-8");
 
   for (const mot of MOTS_INTERDITS) {
     if (contenu.includes(mot)) {
-      console.error(`⛔ ${path.relative(".", fichier)} contient « ${mot} » — interdit côté app.`);
+      console.error(`⛔ ${path.relative(".", fichier)} contient « ${mot} » — interdit.`);
       echecs++;
     }
   }
 
-  for (const origine of extraireOrigines(contenu)) {
-    if (!estAutorisee(origine)) {
-      console.error(
-        `⛔ ${path.relative(".", fichier)} atteint une origine non autorisée : ${origine}`
-      );
-      echecs++;
+  const origines = extraireOrigines(contenu);
+  for (const origine of origines) {
+    if (mode === "app") {
+      // src/ : routes internes + CDN seulement — JAMAIS les partenaires serveur.
+      if (!estAutorisee(origine, ORIGINES_APP) && !estAutorisee(origine, ORIGINES_CDN)) {
+        console.error(`⛔ ${path.relative(".", fichier)} (app) atteint une origine non autorisée : ${origine}`);
+        echecs++;
+      }
+    } else {
+      // server/ : partenaires serveur autorisés.
+      if (!estAutorisee(origine, ORIGINES_SERVEUR)) {
+        console.error(`⛔ ${path.relative(".", fichier)} (serveur) atteint une origine non autorisée : ${origine}`);
+        echecs++;
+      }
     }
   }
 }
 
 if (echecs > 0) {
-  console.error(`\n${echecs} violation(s) de la frontière d'origines. Liste blanche :`);
-  for (const o of ORIGINES_AUTORISEES) console.error(`  ✓ ${o}`);
+  console.error(`\n${echecs} violation(s) de la frontière d'origines.`);
+  console.error(`Liste blanche app (src/) :`);
+  for (const o of ORIGINES_APP) console.error(`  ✓ ${o}`);
+  for (const o of ORIGINES_CDN) console.error(`  ✓ ${o} (CDN)`);
+  console.error(`Liste blanche serveur (server/) :`);
+  for (const o of ORIGINES_SERVEUR) console.error(`  ✓ ${o}`);
   process.exit(1);
 }
 

@@ -11,7 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "preview": "vite preview",
-    "check:origins": "node scripts/check-origins.mjs src"
+    "check:origins": "node scripts/check-origins.mjs src --app && node scripts/check-origins.mjs server --serveur"
   },
   "dependencies": {
     "react": "^19.3.1",

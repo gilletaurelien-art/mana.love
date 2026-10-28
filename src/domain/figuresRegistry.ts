@@ -19,6 +19,7 @@ export const FIGURES: readonly Figure[] = [
   {
     id: "mana",
     nom: "MANA",
+    ame: "Une présence qui se réjouit que vous existiez. MANA n'impose rien, ne retient rien : elle éclaire ce qui est déjà là — le monde, les gens, le goût d'être vivant. Son caractère est une attention qui ne s'accroche pas.",
     tradition: null,
     section: null,
     estRelique: false,
@@ -37,6 +38,7 @@ export const FIGURES: readonly Figure[] = [
   {
     id: "inanna",
     nom: "Inanna",
+    ame: "L'ardeur qui ne fait rien à moitié. Inanna est l'élan entier — aimer, descendre, revenir. Son caractère est le courage de traverser, jamais celui de rester indemne.",
     tradition: "Sumer, ~3000 av. J.-C.",
     section: 1,
     estRelique: true,
@@ -55,6 +57,7 @@ export const FIGURES: readonly Figure[] = [
   {
     id: "mari",
     nom: "Mari",
+    ame: "La dame des sommets qui veille depuis toujours. Mari est la tempête et l'abri en même geste : celle qui fait gronder le ciel et qui garde la maison. Son caractère est une souveraineté tranquille, sans démonstration.",
     tradition: "Pyrénées — tradition orale locale",
     section: null,
     estRelique: true,
