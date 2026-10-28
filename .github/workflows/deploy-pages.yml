@@ -8,7 +8,7 @@ name: Déployer la préversion GitHub Pages
 
 on:
   push:
-    branches: [vibe/mana-love-app-foundation-a324c7]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
