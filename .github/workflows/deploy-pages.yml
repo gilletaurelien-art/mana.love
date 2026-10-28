@@ -1,0 +1,45 @@
+name: Déployer la préversion GitHub Pages
+
+# Préversion — jamais le domaine mana.love (cadrage §6 :
+# une URL de préversion, pas une collision avec les 4 533 pages).
+# GitHub Pages est statique : les routes /api/* n'y existent pas ;
+# l'app bascule honnêtement en mode démo conversation et contenu
+# d'exploration de démonstration.
+
+on:
+  push:
+    branches: [vibe/mana-love-app-foundation-a324c7]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npx vite build --base=/mana.love/
+      - name: Page 404 pour le routage SPA
+        run: cp dist/index.html dist/404.html
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - id: deployment
+        uses: actions/deploy-pages@v4

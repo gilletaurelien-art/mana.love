@@ -1,0 +1,168 @@
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+}
+
+.home__hero {
+  padding: var(--sp-6) 0 var(--sp-2);
+  text-align: center;
+}
+
+.home__hero .display {
+  margin: var(--sp-3) 0 var(--sp-4);
+}
+
+.home__hero .lead {
+  margin: 0 auto;
+}
+
+/* ---------- Portes ---------- */
+.home__doors {
+  display: grid;
+  gap: var(--sp-4);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .home__doors {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.door {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-6) var(--sp-5);
+  border-radius: var(--r-lg);
+  text-decoration: none;
+  min-height: 260px;
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--t-fast), box-shadow var(--t-fast);
+}
+
+.door:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-soft);
+}
+
+/* La porte conversation reste dans la nuit MANA. */
+.door--night {
+  background:
+    radial-gradient(420px 260px at 85% 15%, rgba(169, 199, 197, 0.10), transparent 65%),
+    linear-gradient(160deg, var(--c-indigo-900), var(--c-night-950) 75%);
+  border: 1px solid rgba(169, 199, 197, 0.18);
+  color: var(--c-ink-high);
+}
+
+/* La porte exploration s'ouvre sur la brume vivante — lumière du jour. */
+.door--dawn {
+  background:
+    radial-gradient(420px 260px at 15% 20%, rgba(243, 235, 221, 0.14), transparent 62%),
+    radial-gradient(380px 240px at 85% 80%, rgba(169, 199, 197, 0.16), transparent 60%),
+    linear-gradient(160deg, #31435c, #243349 60%, var(--c-indigo-900));
+  border: 1px solid rgba(169, 199, 197, 0.28);
+  color: var(--c-ink-high);
+}
+
+.door__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  line-height: 1.1;
+}
+
+.door__desc {
+  color: var(--c-ink-mid);
+  font-size: var(--fs-body);
+  max-width: 40ch;
+}
+
+.door__cta {
+  margin-top: auto;
+  font-weight: 600;
+  color: var(--c-brume-soft);
+  font-size: var(--fs-small);
+  letter-spacing: 0.06em;
+}
+
+/* Or rare : seul l'appel à la conversation porte la signature dorée. */
+.door--night .door__cta {
+  color: var(--c-or-400);
+}
+
+/* ---------- Moments ---------- */
+.home__moments {
+  display: grid;
+  gap: var(--sp-3);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .home__moments {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.moment-card {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: var(--sp-4);
+  text-decoration: none;
+  color: var(--c-ink-high);
+}
+
+.moment-card__glyph {
+  font-size: 1.4rem;
+  color: var(--c-brume);
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(169, 199, 197, 0.08);
+  border: 1px solid rgba(169, 199, 197, 0.22);
+  flex-shrink: 0;
+}
+
+.moment-card strong {
+  display: block;
+  font-size: var(--fs-body);
+}
+
+.moment-card .muted {
+  font-size: var(--fs-small);
+  display: block;
+}
+
+/* ---------- Progression ---------- */
+.home__progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.home__balance {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  /* L'or a sa place ici : la progression est une signature. */
+  color: var(--c-or-400);
+  white-space: nowrap;
+}
+
+/* ---------- Invitation ---------- */
+.home__invite {
+  text-align: center;
+  padding: var(--sp-6) 0;
+  border-top: 1px solid rgba(169, 199, 197, 0.12);
+}
+
+.home__invite h2 {
+  margin: var(--sp-2) 0 var(--sp-3);
+}
+
+.home__invite .lead {
+  margin: 0 auto var(--sp-4);
+}
