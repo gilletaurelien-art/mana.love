@@ -1,0 +1,21 @@
+.privacy {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+
+.privacy section {
+  padding-top: var(--sp-4);
+  border-top: 1px solid rgba(169, 199, 197, 0.12);
+}
+
+.privacy__list {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: var(--c-ink-mid);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
