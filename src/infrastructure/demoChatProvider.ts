@@ -16,7 +16,7 @@ function buildReply(
 ): string {
   const name = personality.name;
   const gentleOpenings = [
-    "Je t'écoute.",
+    "Je vous écoute.",
     "Merci de me le confier.",
     "C'est noté, doucement.",
   ];
@@ -24,7 +24,7 @@ function buildReply(
   return [
     `${opening} Voici une réponse de démonstration — dans cette version, ${name} est un mode démo local : les réponses viennent d'un petit script, pas d'un modèle d'IA.`,
     "",
-    `Tu as écrit : « ${userText.slice(0, 140)}${userText.length > 140 ? "…" : ""} »`,
+    `Vous avez écrit : « ${userText.slice(0, 140)}${userText.length > 140 ? "…" : ""} »`,
     "",
     `Quand un fournisseur d'IA sera configuré côté serveur (voir README), ${name} répondra avec sa vraie personnalité : ${personality.characterTraits.join(", ")}.`,
   ].join("\n");
