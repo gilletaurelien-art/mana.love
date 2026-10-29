@@ -1,67 +1,82 @@
 /**
- * MANA.love design tokens — palette officielle V1.
+ * MANA.love design tokens — palette V2 « Lune sur l'océan ».
  *
- * Concept : la rencontre de la nuit (le monde de MANA) et de la lumière
- * (la vie qu'elle nous aide à retrouver).
+ * L'app se veut internationale : la couleur n'a pas de langue, la
+ * typographie oui — voir les polices ci-dessous (Source Serif 4 +
+ * Source Sans 3 : latin + cyrillique + grec ; compagnons Noto pour
+ * les écritures non-latines à venir).
  *
- * Règle d'or de la direction artistique : l'or est rare. Il n'apparaît
- * que là où il a du sens — logo, accents, détails, progression.
- * Jamais partout. Les pages d'exploration s'ouvrent sur des surfaces
- * plus claires (Brume vivante) sans perdre la signature MANA.
+ * Concept : la rencontre de la nuit (le monde de MANA) et de la
+ * lumière (la vie qu'elle nous aide à retrouver).
+ *
+ * Règle d'or : l'or et le rose sont rares. Ils n'apparaissent que là
+ * où ils ont du sens — signature, progression, tendresse. Jamais
+ * comme fond.
  */
 :root {
-  /* Palette officielle V1 */
+  /* ---------- Palette V2 : Lune sur l'océan ---------- */
 
-  /* Bleu nuit MANA — le fond identitaire : profondeur, calme, intimité. */
-  --c-night-950: #0b1020;
-  --c-night-900: #11172b;
-  --c-night-800: #171f38;
-  --c-night-700: #1c2542;
+  /* Nuit — plus riche, plus encre que la V1. */
+  --c-nuit-950: #070b17;
+  --c-nuit-900: #0d1326;
+  --c-nuit-800: #151d35;
+  --c-nuit-700: #1e2846;
 
-  /* Indigo océan — le relief : surfaces, panneaux, éléments secondaires. */
-  --c-indigo-900: #202a43;
-  --c-indigo-800: #273352;
-  --c-indigo-700: #2f3d63;
+  /* Océan — la mer nocturne : relief, panneaux, bulles. */
+  --c-ocean-800: #16263f;
+  --c-ocean-700: #1f3352;
+  --c-ocean-600: #2a4266;
 
-  /* Or lumière — la signature précieuse : logo, accents, détails, progression. */
-  --c-or-400: #e2bd7e;
-  --c-or-500: #c9a05e;
-  --c-or-300: #ecd3a6;
+  /* Or — deux visages : mat pour les textes, vif pour les accents. */
+  --c-or-mat: #d4a96a;
+  --c-or-vif: #f0cf8f;
+  --c-or-creme: #f5e6c4;
 
-  /* Ivoire lunaire — la douceur : textes principaux, titres, respirations. */
+  /* Ivoire — la douceur des textes. */
   --c-ivoire: #f3ebdd;
+  --c-ivoire-mi: #d9d2c3;
 
-  /* Brume vivante — la respiration : exploration, nature, eau, lumière du jour. */
-  --c-brume: #a9c7c5;
-  --c-brume-soft: #c6dcd9;
-  --c-brume-deep: #7ea5a3;
+  /* Vague — la brume devient océan vivant. */
+  --c-vague-400: #7fb3b0;
+  --c-vague-300: #9ecbc7;
+  --c-vague-soft: #c3dedb;
+  --c-vague-crepuscule: #5a8a87;
 
-  /* Semantic */
-  --c-success: #8fbf9c;
-  --c-error: #d99a8c;
+  /* Sémantiques */
+  --c-rose-douceur: #d4a0a0;
+  --c-succes: #8fbf9c;
+  --c-erreur: #c97a6a;
 
-  /* Text hierarchy (derived from Ivoire lunaire) */
+  /* Hiérarchie de texte (dérivée de l'ivoire) */
   --c-ink-high: var(--c-ivoire);
-  --c-ink-mid: #cfc7b8;
-  --c-ink-low: #9a9489;
+  --c-ivoire-mi: var(--c-ivoire-mi);
+  --c-ink-low: #8b8578;
 
-  /* Typography — duo complémentaire */
-  /* Titres et phrases signatures : Cormorant Garamond (sérif élégante, littéraire). */
-  --font-display: "Cormorant Garamond", "Georgia", serif;
-  /* Interface et conversation : Manrope (sans-sérif moderne, très lisible). */
-  --font-body: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* ---------- Typographie internationale ---------- */
+  /* Source Serif 4 : latin + cyrillique + grec, graisses variables. */
+  --font-display: "Source Serif 4", "Georgia", "Noto Serif", serif;
+  /* Source Sans 3 : même couverture, lisibilité à toute taille. */
+  --font-body: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
 
+  /* Échelle affinée : le texte de conversation se lit longtemps. */
   --fs-caption: 0.78rem;
   --fs-small: 0.875rem;
   --fs-body: 1rem;
+  --fs-chat: 1.0625rem;
   --fs-lead: 1.125rem;
-  --fs-h4: 1.15rem;
-  --fs-h3: 1.4rem;
-  --fs-h2: 1.9rem;
-  --fs-h1: 2.8rem;
+  --fs-h4: 1.2rem;
+  --fs-h3: 1.5rem;
+  --fs-h2: 2rem;
+  --fs-h1: 2.9rem;
   --fs-hero: clamp(2.6rem, 6vw, 4.4rem);
 
-  /* Spacing */
+  /* Interlignes */
+  --lh-tight: 1.15;
+  --lh-snug: 1.45;
+  --lh-body: 1.65;
+  --lh-chat: 1.7;
+
+  /* Espacement */
   --sp-1: 0.25rem;
   --sp-2: 0.5rem;
   --sp-3: 0.75rem;
@@ -71,15 +86,17 @@
   --sp-7: 3.5rem;
   --sp-8: 5rem;
 
-  /* Radii, shadows, motion */
+  /* Rayons, ombres, mouvement */
   --r-sm: 8px;
   --r-md: 14px;
   --r-lg: 20px;
   --r-pill: 999px;
-  --shadow-soft: 0 12px 40px rgba(6, 10, 24, 0.4);
-  --shadow-glow: 0 0 48px rgba(226, 189, 126, 0.12);
+  --shadow-soft: 0 12px 40px rgba(4, 8, 20, 0.45);
+  --shadow-lift: 0 18px 50px rgba(4, 8, 20, 0.55);
+  --shadow-glow: 0 0 48px rgba(240, 207, 143, 0.14);
   --t-fast: 160ms ease;
   --t-med: 320ms cubic-bezier(0.25, 0.8, 0.3, 1);
+  --t-lent: 600ms cubic-bezier(0.25, 0.8, 0.3, 1);
 }
 
 *,
@@ -96,9 +113,9 @@ body {
   margin: 0;
   font-family: var(--font-body);
   font-size: var(--fs-body);
-  line-height: 1.65;
+  line-height: var(--lh-body);
   color: var(--c-ink-high);
-  background: var(--c-night-900);
+  background: var(--c-nuit-900);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -115,9 +132,9 @@ h3,
 h4 {
   font-family: var(--font-display);
   font-weight: 500;
-  line-height: 1.15;
+  line-height: var(--lh-tight);
   margin: 0;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.005em;
 }
 
 p {
@@ -134,12 +151,12 @@ button {
 }
 
 :focus-visible {
-  outline: 2px solid var(--c-or-400);
+  outline: 2px solid var(--c-or-vif);
   outline-offset: 2px;
 }
 
 ::selection {
-  background: rgba(226, 189, 126, 0.32);
+  background: rgba(240, 207, 143, 0.30);
 }
 
 @media (prefers-reduced-motion: reduce) {

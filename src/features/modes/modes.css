@@ -11,13 +11,13 @@
   display: grid;
   place-items: center;
   background:
-    radial-gradient(500px 300px at 50% 0%, rgba(169, 199, 197, 0.10), transparent 65%),
-    linear-gradient(180deg, rgba(32, 42, 67, 0.5), rgba(23, 31, 56, 0.6));
+    radial-gradient(500px 300px at 50% 0%, rgba(127, 179, 176, 0.10), transparent 65%),
+    linear-gradient(180deg, rgba(22, 38, 63, 0.5), rgba(23, 31, 56, 0.6));
 }
 
 .mode__glyph {
   font-size: 2.4rem;
-  color: var(--c-or-300);
+  color: var(--c-or-vif);
 }
 
 .center {

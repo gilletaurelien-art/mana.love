@@ -2,9 +2,9 @@
   position: sticky;
   top: 0;
   z-index: 40;
-  background: rgba(17, 23, 43, 0.82);
+  background: rgba(13, 19, 38, 0.82);
   backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(169, 199, 197, 0.1);
+  border-bottom: 1px solid rgba(127, 179, 176, 0.1);
 }
 
 .topbar__inner {
@@ -30,7 +30,7 @@
 }
 
 .topbar__dot {
-  color: var(--c-or-400);
+  color: var(--c-or-mat);
 }
 
 .topbar__nav {
@@ -46,7 +46,7 @@
   font-size: var(--fs-small);
   font-weight: 500;
   text-decoration: none;
-  color: var(--c-ink-mid);
+  color: var(--c-ivoire-mi);
   transition: color var(--t-fast), background var(--t-fast);
 }
 
@@ -55,8 +55,8 @@
 }
 
 .topbar__link--active {
-  color: var(--c-brume-soft);
-  background: rgba(169, 199, 197, 0.12);
+  color: var(--c-vague-soft);
+  background: rgba(127, 179, 176, 0.12);
 }
 
 .topbar__meta {
@@ -70,11 +70,23 @@
   margin-left: 0;
 }
 
+.topbar__langue {
+  background: transparent;
+  border: 1px solid rgba(127, 179, 176, 0.25);
+  border-radius: var(--r-sm);
+  color: var(--c-ink-mid);
+  font-family: var(--font-body);
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  padding: 0.2rem 0.35rem;
+  cursor: pointer;
+}
+
 .topbar__points {
   font-family: var(--font-display);
   font-size: 1rem;
-  color: var(--c-or-300);
-  border: 1px solid rgba(226, 189, 126, 0.35);
+  color: var(--c-or-vif);
+  border: 1px solid rgba(212, 169, 106, 0.35);
   border-radius: var(--r-pill);
   padding: 0.2rem 0.8rem;
   display: inline-flex;
@@ -91,9 +103,9 @@
   z-index: 40;
   display: flex;
   justify-content: space-around;
-  background: rgba(17, 23, 43, 0.92);
+  background: rgba(13, 19, 38, 0.92);
   backdrop-filter: blur(14px);
-  border-top: 1px solid rgba(169, 199, 197, 0.12);
+  border-top: 1px solid rgba(127, 179, 176, 0.12);
   padding: var(--sp-1) var(--sp-1) calc(var(--sp-1) + env(safe-area-inset-bottom));
 }
 
@@ -113,7 +125,7 @@
 }
 
 .mobilenav__item--active {
-  color: var(--c-brume-soft);
+  color: var(--c-vague-soft);
 }
 
 .mobilenav__glyph {
@@ -137,7 +149,7 @@
 
 /* ---------- Footer ---------- */
 .footer {
-  border-top: 1px solid rgba(169, 199, 197, 0.1);
+  border-top: 1px solid rgba(127, 179, 176, 0.1);
   padding: var(--sp-6) var(--sp-4) calc(var(--sp-6) + 56px);
   text-align: center;
   margin-top: var(--sp-7);
@@ -150,7 +162,7 @@
 }
 
 .footer__tagline em {
-  color: var(--c-or-300);
+  color: var(--c-or-vif);
 }
 
 .footer__legal {
@@ -161,7 +173,7 @@
 }
 
 .footer__links a {
-  color: var(--c-ink-mid);
+  color: var(--c-ivoire-mi);
   font-size: var(--fs-small);
   text-decoration: underline;
   text-underline-offset: 3px;

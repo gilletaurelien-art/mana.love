@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import { useProgression } from "@/app/ProgressionContext";
+import { useI18n } from "@/app/LanguageContext";
 import { sortedPersonalities } from "@/domain/personalityRegistry";
 import { unlockStatusFor } from "@/domain/progression";
 
 export default function HomeScreen() {
   const { balance, unlockedPersonalities } = useProgression();
+  const { t } = useI18n();
   const nextGoddess = sortedPersonalities().find(
     (p) => p.unlock.kind === "mana-points" && !unlockStatusFor(p, balance).unlocked
   );
@@ -15,33 +17,23 @@ export default function HomeScreen() {
       <section className="home__hero">
         <p className="eyebrow">MANA.love</p>
         <h1 className="display">
-          Aimer <em>la vie.</em>
+          {t("home.promise").replace(" la vie.", "")} <em>la vie.</em>
         </h1>
-        <p className="lead">
-          MANA est une compagne chaleureuse qui vous aide à remarquer le monde,
-          à agir concrètement et à vous reposer — parce que la vie se vit
-          dehors, pas derrière un écran.
-        </p>
+        <p className="lead">{t("home.intro")}</p>
       </section>
 
       <section aria-label="Deux portes" className="home__doors">
         <Link to="/parler" className="door door--night">
           <span className="eyebrow">Conversation</span>
-          <span className="door__title">Parler avec MANA</span>
-          <span className="door__desc">
-            Déposer ce qui pèse, réfléchir à voix haute, être encouragé à
-            passer à l'action.
-          </span>
-          <span className="door__cta">Commencer →</span>
+          <span className="door__title">{t("home.door.talk")}</span>
+          <span className="door__desc">{t("home.door.talkDesc")}</span>
+          <span className="door__cta">{t("home.door.commencer")} →</span>
         </Link>
         <Link to="/explorer" className="door door--dawn">
           <span className="eyebrow">Exploration</span>
-          <span className="door__title">Explorer le monde</span>
-          <span className="door__desc">
-            Découvrir des lieux, des chemins et des expériences qui vous
-            attendent, près de chez vous.
-          </span>
-          <span className="door__cta">Découvrir →</span>
+          <span className="door__title">{t("home.door.explore")}</span>
+          <span className="door__desc">{t("home.door.exploreDesc")}</span>
+          <span className="door__cta">{t("home.door.decouvrir")} →</span>
         </Link>
       </section>
 

@@ -59,18 +59,18 @@
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(1100px 700px at 78% -12%, rgba(169, 199, 197, 0.10), transparent 60%),
-    radial-gradient(900px 620px at 12% 8%, rgba(226, 189, 126, 0.05), transparent 55%),
-    radial-gradient(1400px 900px at 50% 115%, rgba(32, 42, 67, 0.6), transparent 65%),
-    linear-gradient(180deg, var(--c-night-900) 0%, var(--c-night-950) 100%);
+    radial-gradient(1100px 700px at 78% -12%, rgba(127, 179, 176, 0.10), transparent 60%),
+    radial-gradient(900px 620px at 12% 8%, rgba(212, 169, 106, 0.05), transparent 55%),
+    radial-gradient(1400px 900px at 50% 115%, rgba(22, 38, 63, 0.6), transparent 65%),
+    linear-gradient(180deg, var(--c-nuit-900) 0%, var(--c-nuit-950) 100%);
 }
 
 .atmosphere--dawn {
   /* Pages d'exploration : surfaces plus claires, lumière du jour — Brume vivante. */
   background:
     radial-gradient(1200px 800px at 82% -18%, rgba(243, 235, 221, 0.10), transparent 60%),
-    radial-gradient(900px 640px at 8% -8%, rgba(169, 199, 197, 0.14), transparent 58%),
-    linear-gradient(180deg, #1a2237 0%, var(--c-night-900) 45%, #242f4d 100%);
+    radial-gradient(900px 640px at 8% -8%, rgba(127, 179, 176, 0.14), transparent 58%),
+    linear-gradient(180deg, #1a2237 0%, var(--c-nuit-900) 45%, #242f4d 100%);
 }
 
 /* ---------- Typographie ---------- */
@@ -80,17 +80,17 @@
   font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--c-brume);
+  color: var(--c-vague-400);
 }
 
 .lead {
   font-size: var(--fs-lead);
-  color: var(--c-ink-mid);
+  color: var(--c-ivoire-mi);
   max-width: 62ch;
 }
 
 .muted {
-  color: var(--c-ink-mid);
+  color: var(--c-ivoire-mi);
 }
 
 .quiet {
@@ -106,7 +106,7 @@
 .display em {
   font-style: italic;
   /* Or rare : réservé à la phrase signature. */
-  color: var(--c-or-400);
+  color: var(--c-or-mat);
 }
 
 /* ---------- Boutons ---------- */
@@ -133,29 +133,29 @@
 }
 
 .btn-primary {
-  background: var(--c-or-400);
-  color: var(--c-night-900);
+  background: var(--c-or-mat);
+  color: var(--c-nuit-900);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--c-or-300);
+  background: var(--c-or-vif);
   transform: translateY(-1px);
 }
 
 .btn-secondary {
-  background: rgba(32, 42, 67, 0.7);
-  border-color: rgba(169, 199, 197, 0.35);
+  background: rgba(22, 38, 63, 0.7);
+  border-color: rgba(127, 179, 176, 0.35);
   color: var(--c-ivoire);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  border-color: var(--c-brume);
+  border-color: var(--c-vague-400);
   background: rgba(39, 51, 82, 0.8);
 }
 
 .btn-ghost {
   background: transparent;
-  color: var(--c-ink-mid);
+  color: var(--c-ivoire-mi);
   border-color: rgba(154, 148, 137, 0.3);
 }
 
@@ -181,8 +181,8 @@
 
 /* ---------- Surfaces ---------- */
 .surface {
-  background: linear-gradient(180deg, rgba(32, 42, 67, 0.45), rgba(23, 31, 56, 0.55));
-  border: 1px solid rgba(169, 199, 197, 0.10);
+  background: linear-gradient(180deg, rgba(22, 38, 63, 0.45), rgba(23, 31, 56, 0.55));
+  border: 1px solid rgba(127, 179, 176, 0.10);
   border-radius: var(--r-lg);
   box-shadow: var(--shadow-soft);
 }
@@ -196,7 +196,7 @@
 }
 
 .surface--interact:hover {
-  border-color: rgba(226, 189, 126, 0.35);
+  border-color: rgba(212, 169, 106, 0.35);
   transform: translateY(-2px);
 }
 
@@ -211,13 +211,13 @@
   text-transform: uppercase;
   padding: 0.25rem 0.65rem;
   border-radius: var(--r-pill);
-  background: rgba(169, 199, 197, 0.12);
-  color: var(--c-brume);
+  background: rgba(127, 179, 176, 0.12);
+  color: var(--c-vague-400);
 }
 
 .tag--demo {
-  background: rgba(226, 189, 126, 0.12);
-  color: var(--c-or-400);
+  background: rgba(212, 169, 106, 0.12);
+  color: var(--c-or-mat);
 }
 
 .tag--locked {
@@ -230,15 +230,15 @@
   display: block;
   font-size: var(--fs-small);
   font-weight: 600;
-  color: var(--c-ink-mid);
+  color: var(--c-ivoire-mi);
   margin-bottom: var(--sp-2);
 }
 
 .text-input,
 textarea.text-input {
   width: 100%;
-  background: rgba(11, 16, 32, 0.6);
-  border: 1px solid rgba(169, 199, 197, 0.18);
+  background: rgba(7, 11, 23, 0.6);
+  border: 1px solid rgba(127, 179, 176, 0.18);
   border-radius: var(--r-md);
   color: var(--c-ink-high);
   font-family: var(--font-body);
@@ -249,7 +249,7 @@ textarea.text-input {
 
 .text-input:focus {
   outline: none;
-  border-color: var(--c-brume);
+  border-color: var(--c-vague-400);
 }
 
 .text-input::placeholder {
@@ -260,8 +260,8 @@ textarea.text-input {
 .notice {
   border-radius: var(--r-md);
   padding: var(--sp-4);
-  border: 1px solid rgba(169, 199, 197, 0.3);
-  background: rgba(169, 199, 197, 0.08);
+  border: 1px solid rgba(127, 179, 176, 0.3);
+  background: rgba(127, 179, 176, 0.08);
   font-size: var(--fs-small);
   color: var(--c-ivoire);
 }
@@ -273,8 +273,8 @@ textarea.text-input {
 }
 
 .notice--info {
-  border-color: rgba(169, 199, 197, 0.35);
-  background: rgba(169, 199, 197, 0.1);
+  border-color: rgba(127, 179, 176, 0.35);
+  background: rgba(127, 179, 176, 0.1);
   color: var(--c-ivoire);
 }
 
@@ -290,7 +290,7 @@ textarea.text-input {
   height: 100%;
   border-radius: var(--r-pill);
   /* L'or apparaît précisément ici : progression. */
-  background: linear-gradient(90deg, var(--c-or-500), var(--c-or-400));
+  background: linear-gradient(90deg, var(--c-or-mat), var(--c-or-mat));
   transition: width var(--t-med);
 }
 
@@ -310,16 +310,16 @@ textarea.text-input {
   display: flex;
   gap: var(--sp-3);
   align-items: flex-start;
-  border: 1px dashed rgba(169, 199, 197, 0.4);
+  border: 1px dashed rgba(127, 179, 176, 0.4);
   border-radius: var(--r-md);
   padding: var(--sp-3) var(--sp-4);
-  background: rgba(169, 199, 197, 0.06);
+  background: rgba(127, 179, 176, 0.06);
   font-size: var(--fs-small);
-  color: var(--c-brume-soft);
+  color: var(--c-vague-soft);
 }
 
 .demo-banner strong {
-  color: var(--c-or-400);
+  color: var(--c-or-mat);
 }
 
 /* ---------- Squelette ---------- */

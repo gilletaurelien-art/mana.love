@@ -1,14 +1,16 @@
 import { NavLink } from "react-router-dom";
+import { useI18n } from "@/app/LanguageContext";
 
 const ITEMS = [
-  { to: "/", label: "Accueil", glyph: "◇" },
-  { to: "/parler", label: "Parler", glyph: "☾" },
-  { to: "/explorer", label: "Explorer", glyph: "✧" },
-  { to: "/univers", label: "Univers", glyph: "✿" },
-  { to: "/ecouter", label: "Écouter", glyph: "♪" },
-];
+  { to: "/", cle: "nav.accueil", glyph: "◇" },
+  { to: "/parler", cle: "nav.parler", glyph: "☾" },
+  { to: "/explorer", cle: "nav.explorer", glyph: "✧" },
+  { to: "/univers", cle: "nav.univers", glyph: "✿" },
+  { to: "/ecouter", cle: "nav.ecouter", glyph: "♪" },
+] as const;
 
 export default function MobileNav() {
+  const { t } = useI18n();
   return (
     <nav aria-label="Navigation mobile" className="mobilenav">
       {ITEMS.map((item) => (
@@ -21,7 +23,7 @@ export default function MobileNav() {
           }
         >
           <span aria-hidden="true" className="mobilenav__glyph">{item.glyph}</span>
-          <span>{item.label}</span>
+          <span>{t(item.cle)}</span>
         </NavLink>
       ))}
     </nav>

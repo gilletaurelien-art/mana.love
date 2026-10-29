@@ -51,9 +51,9 @@
 /* La porte conversation reste dans la nuit MANA. */
 .door--night {
   background:
-    radial-gradient(420px 260px at 85% 15%, rgba(169, 199, 197, 0.10), transparent 65%),
-    linear-gradient(160deg, var(--c-indigo-900), var(--c-night-950) 75%);
-  border: 1px solid rgba(169, 199, 197, 0.18);
+    radial-gradient(420px 260px at 85% 15%, rgba(127, 179, 176, 0.10), transparent 65%),
+    linear-gradient(160deg, var(--c-ocean-800), var(--c-nuit-950) 75%);
+  border: 1px solid rgba(127, 179, 176, 0.18);
   color: var(--c-ink-high);
 }
 
@@ -61,9 +61,9 @@
 .door--dawn {
   background:
     radial-gradient(420px 260px at 15% 20%, rgba(243, 235, 221, 0.14), transparent 62%),
-    radial-gradient(380px 240px at 85% 80%, rgba(169, 199, 197, 0.16), transparent 60%),
-    linear-gradient(160deg, #31435c, #243349 60%, var(--c-indigo-900));
-  border: 1px solid rgba(169, 199, 197, 0.28);
+    radial-gradient(380px 240px at 85% 80%, rgba(127, 179, 176, 0.16), transparent 60%),
+    linear-gradient(160deg, #31435c, #243349 60%, var(--c-ocean-800));
+  border: 1px solid rgba(127, 179, 176, 0.28);
   color: var(--c-ink-high);
 }
 
@@ -74,7 +74,7 @@
 }
 
 .door__desc {
-  color: var(--c-ink-mid);
+  color: var(--c-ivoire-mi);
   font-size: var(--fs-body);
   max-width: 40ch;
 }
@@ -82,14 +82,14 @@
 .door__cta {
   margin-top: auto;
   font-weight: 600;
-  color: var(--c-brume-soft);
+  color: var(--c-vague-soft);
   font-size: var(--fs-small);
   letter-spacing: 0.06em;
 }
 
 /* Or rare : seul l'appel à la conversation porte la signature dorée. */
 .door--night .door__cta {
-  color: var(--c-or-400);
+  color: var(--c-or-mat);
 }
 
 /* ---------- Moments ---------- */
@@ -116,14 +116,14 @@
 
 .moment-card__glyph {
   font-size: 1.4rem;
-  color: var(--c-brume);
+  color: var(--c-vague-400);
   width: 48px;
   height: 48px;
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: rgba(169, 199, 197, 0.08);
-  border: 1px solid rgba(169, 199, 197, 0.22);
+  background: rgba(127, 179, 176, 0.08);
+  border: 1px solid rgba(127, 179, 176, 0.22);
   flex-shrink: 0;
 }
 
@@ -148,7 +148,7 @@
   font-family: var(--font-display);
   font-size: var(--fs-h3);
   /* L'or a sa place ici : la progression est une signature. */
-  color: var(--c-or-400);
+  color: var(--c-or-mat);
   white-space: nowrap;
 }
 
@@ -156,7 +156,7 @@
 .home__invite {
   text-align: center;
   padding: var(--sp-6) 0;
-  border-top: 1px solid rgba(169, 199, 197, 0.12);
+  border-top: 1px solid rgba(127, 179, 176, 0.12);
 }
 
 .home__invite h2 {

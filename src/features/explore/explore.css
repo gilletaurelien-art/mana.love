@@ -45,7 +45,7 @@
   display: grid;
   place-items: center;
   font-size: 1.3rem;
-  border: 1px solid rgba(169, 199, 197, 0.18);
+  border: 1px solid rgba(127, 179, 176, 0.18);
 }
 
 .kind-landscape { background: linear-gradient(135deg, #2e4a3c, #16241d); }
@@ -53,7 +53,7 @@
 .kind-path { background: linear-gradient(135deg, #4a3a24, #20180d); }
 .kind-garden { background: linear-gradient(135deg, #37452a, #161d0f); }
 .kind-viewpoint { background: linear-gradient(135deg, #3c3552, #171225); }
-.kind-experience { background: linear-gradient(135deg, var(--c-night-700), var(--c-night-800)); }
+.kind-experience { background: linear-gradient(135deg, var(--c-nuit-700), var(--c-nuit-800)); }
 
 .explore-card__body {
   display: flex;
@@ -67,7 +67,7 @@
 }
 
 .explore-card__summary {
-  color: var(--c-ink-mid);
+  color: var(--c-ivoire-mi);
   font-size: var(--fs-small);
 }
 
@@ -90,7 +90,7 @@
 
 .explore-detail__section {
   padding-top: var(--sp-4);
-  border-top: 1px solid rgba(169, 199, 197, 0.12);
+  border-top: 1px solid rgba(127, 179, 176, 0.12);
   display: flex;
   flex-direction: column;
   gap: var(--sp-3);

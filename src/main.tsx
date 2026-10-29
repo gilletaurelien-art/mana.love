@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import PageShell from "@/components/PageShell";
 import { ProgressionProvider } from "@/app/ProgressionContext";
 import { ChatProviderProvider } from "@/app/ChatProviderContext";
+import { LanguageProvider } from "@/app/LanguageContext";
 import HomeScreen from "@/features/home/HomeScreen";
 import ChatScreen from "@/features/chat/ChatScreen";
 import ExploreScreen from "@/features/explore/ExploreScreen";
@@ -22,6 +23,7 @@ import "@/features/home/home.css";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
+      <LanguageProvider>
       <ProgressionProvider>
         <ChatProviderProvider>
           <PageShell>
@@ -41,6 +43,7 @@ createRoot(document.getElementById("root")!).render(
           </PageShell>
         </ChatProviderProvider>
       </ProgressionProvider>
+      </LanguageProvider>
     </BrowserRouter>
   </StrictMode>
 );
