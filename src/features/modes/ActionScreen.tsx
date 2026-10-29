@@ -52,18 +52,16 @@ export default function ActionScreen() {
           <p className="lead center-text">{suggestion.body}</p>
           {committed.includes(suggestion.id) ? (
             <div className="notice notice--info">
-              Engagement noté — c'est à vous de jouer, dans le monde réel.
-              MANA ne vérifie pas l'action effectuée ; cette version
-              récompense l'intention déclarée, en toute transparence.
+              Beau geste. À vous de le vivre, dehors.
             </div>
           ) : (
             <button className="btn btn-primary btn-lg" onClick={commit}>
-              Je m'y engage aujourd'hui
+              Je le fais aujourd'hui
             </button>
           )}
           {committed.length > 0 && committed.length < SUGGESTIONS.length && (
             <button className="btn btn-ghost" onClick={() => setCommitted((prev) => prev)}>
-              Une autre proposition bientôt — revenez après l'avoir faite, pas avant.
+              Une nouvelle proposition arrive bientôt.
             </button>
           )}
         </div>

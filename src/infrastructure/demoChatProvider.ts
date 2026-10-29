@@ -17,16 +17,16 @@ function buildReply(
   const name = personality.name;
   const gentleOpenings = [
     "Je vous écoute.",
-    "Merci de me le confier.",
-    "C'est noté, doucement.",
+    "Merci de me le dire.",
+    "Je suis là.",
   ];
   const opening = gentleOpenings[index % gentleOpenings.length];
   return [
-    `${opening} Voici une réponse de démonstration — dans cette version, ${name} est un mode démo local : les réponses viennent d'un petit script, pas d'un modèle d'IA.`,
+    `${opening} (Mode démo — script local, pas la vraie voix de ${name}.)`,
     "",
     `Vous avez écrit : « ${userText.slice(0, 140)}${userText.length > 140 ? "…" : ""} »`,
     "",
-    `Quand un fournisseur d'IA sera configuré côté serveur (voir README), ${name} répondra avec sa vraie personnalité : ${personality.characterTraits.join(", ")}.`,
+    `Avec sa vraie voix, ${name} serait : ${personality.characterTraits.join(", ")}.`,
   ].join("\n");
 }
 

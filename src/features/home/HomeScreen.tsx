@@ -22,13 +22,11 @@ export default function HomeScreen() {
 
       <section aria-label="Deux portes" className="home__doors">
         <Link to="/parler" className="door door--night">
-          <span className="eyebrow">Conversation</span>
           <span className="door__title">{t("home.door.talk")}</span>
           <span className="door__desc">{t("home.door.talkDesc")}</span>
           <span className="door__cta">{t("home.door.commencer")} →</span>
         </Link>
         <Link to="/explorer" className="door door--dawn">
-          <span className="eyebrow">Exploration</span>
           <span className="door__title">{t("home.door.explore")}</span>
           <span className="door__desc">{t("home.door.exploreDesc")}</span>
           <span className="door__cta">{t("home.door.decouvrir")} →</span>
@@ -39,22 +37,22 @@ export default function HomeScreen() {
         <Link to="/sommeil" className="moment-card surface surface--interact">
           <span className="moment-card__glyph" aria-hidden="true">☾</span>
           <span>
-            <strong>Sommeil</strong>
-            <span className="muted">Ralentir avant la nuit</span>
+            <strong>{t("home.moments.sommeil")}</strong>
+            <span className="muted">{t("home.moments.sommeilDesc")}</span>
           </span>
         </Link>
         <Link to="/action" className="moment-card surface surface--interact">
           <span className="moment-card__glyph" aria-hidden="true">✦</span>
           <span>
-            <strong>Action</strong>
-            <span className="muted">Une petite action qui compte, aujourd'hui</span>
+            <strong>{t("home.moments.action")}</strong>
+            <span className="muted">{t("home.moments.actionDesc")}</span>
           </span>
         </Link>
         <Link to="/ecouter" className="moment-card surface surface--interact">
           <span className="moment-card__glyph" aria-hidden="true">♪</span>
           <span>
-            <strong>MANAradio</strong>
-            <span className="muted">Écouter la pluie, le vent, la mer</span>
+            <strong>{t("home.moments.radio")}</strong>
+            <span className="muted">{t("home.moments.radioDesc")}</span>
           </span>
         </Link>
       </section>
@@ -62,11 +60,11 @@ export default function HomeScreen() {
       <section aria-label="Votre progression" className="home__progress surface surface-pad">
         <div className="spread">
           <div>
-            <p className="eyebrow">Votre progression</p>
-            <h2>Le panthéon s'ouvre à vous</h2>
+            <p className="eyebrow">{t("home.progression")}</p>
+            <h2>{t("home.pantheon.titre")}</h2>
           </div>
           <p className="home__balance">
-            <span aria-hidden="true">✦</span> {balance} points MANA
+            <span aria-hidden="true">✦</span> {balance} {t("home.points")}
           </p>
         </div>
         {nextGoddess && nextStatus ? (
@@ -77,7 +75,7 @@ export default function HomeScreen() {
               aria-valuemin={0}
               aria-valuemax={nextGoddess.unlock.kind === "mana-points" ? nextGoddess.unlock.threshold : 0}
               aria-valuenow={balance}
-              aria-label={`Progression vers ${nextGoddess.name}`}
+              aria-label={t("home.progression.suivante", { nom: nextGoddess.name, points: nextStatus.remaining })}
             >
               <div
                 className="progress__fill"
@@ -90,33 +88,27 @@ export default function HomeScreen() {
               />
             </div>
             <p className="quiet">
-              Encore {nextStatus.remaining} points pour rencontrer {nextGoddess.name} —{" "}
-              {nextGoddess.tagline.toLowerCase()}
+              {t("home.progression.suivante", { nom: nextGoddess.name, points: nextStatus.remaining })}
             </p>
           </>
         ) : (
           <p className="quiet">
-            Vous avez rencontré {unlockedPersonalities.length} personnalités du panthéon.
+            {t("home.progression.rencontrees", { n: unlockedPersonalities.length })}
           </p>
         )}
         <p>
           <Link to="/univers" className="btn btn-ghost btn-sm">
-            Voir mes univers
+            {t("nav.univers")}
           </Link>
         </p>
       </section>
 
       <section aria-label="Invitation" className="home__invite">
-        <p className="eyebrow">Une expérience à essayer</p>
-        <h2>Et si vous marchiez sans destination aujourd'hui ?</h2>
-        <p className="lead">
-          MANA propose régulièrement une petite expérience à vivre dans le monde
-          réel. Celle-ci prend vingt minutes et ne demande rien d'autre que
-          votre curiosité.
-        </p>
+        <h2>{t("home.invite.title")}</h2>
+        <p className="lead">{t("home.invite.desc")}</p>
         <p>
           <Link to="/explorer/experience/sample-exp-1" className="btn btn-primary">
-            Découvrir cette expérience
+            {t("home.door.decouvrir")}
           </Link>
         </p>
       </section>

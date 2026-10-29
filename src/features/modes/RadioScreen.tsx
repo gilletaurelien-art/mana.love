@@ -17,11 +17,9 @@ export default function RadioScreen() {
       <div className="demo-banner" role="note">
         <span aria-hidden="true">✦</span>
         <p>
-          <strong>Catalogue en préparation.</strong> Aucun contenu audio n'est
-          encore disponible : MANA.love ne diffusera que des contenus dont les
-          droits sont clairement établis (licences, CC0, créations originales).
-          Les entrées ci-dessous décrivent le catalogue à venir — les contrôles
-          de lecture seront actifs dès qu'une ressource sera configurée.
+          <strong>Bientôt.</strong> Le catalogue arrive — uniquement des sons
+          dont les droits sont clairs. Les entrées ci-dessous donnent un
+          avant-goût.
         </p>
       </div>
 

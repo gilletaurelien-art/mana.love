@@ -48,8 +48,7 @@ export default function ExploreScreen() {
         <p className="eyebrow">Exploration</p>
         <h1>Explorer le monde</h1>
         <p className="lead">
-          Des lieux, des chemins et des expériences à vivre dehors. La
-          curiosité est le seul bagage nécessaire.
+          Des lieux et des expériences à vivre dehors, près de vous.
         </p>
       </div>
 
@@ -64,10 +63,8 @@ export default function ExploreScreen() {
           <span aria-hidden="true">✦</span>
           <div className="stack stack-3">
             <p>
-              <strong>Contenu de démonstration.</strong> Les fiches
-              ci-dessous sont des exemples illustratifs : elles ne
-              contiennent ni localisation, ni horaires, ni itinéraires
-              réels.
+              <strong>Exemples de démonstration.</strong> Activez les lieux
+              réels autour de vous, ou parcourez d'abord les exemples.
             </p>
             <p>
               <button className="btn btn-secondary btn-sm" onClick={useRealLocation}>
@@ -105,8 +102,8 @@ export default function ExploreScreen() {
         {filteredPlaces.length === 0 ? (
           <p className="notice">
             {isOsm
-              ? "Aucun lieu naturel trouvé dans un rayon de 3 km. Élargissez votre recherche ou explorez une autre zone."
-              : "Aucun lieu ne correspond à cette recherche."}
+              ? "Explorez une autre zone pour découvrir d'autres lieux."
+              : "Essayez un autre mot."}
           </p>
         ) : (
           <ul className="explore__grid">
@@ -122,7 +119,7 @@ export default function ExploreScreen() {
       <section aria-labelledby="exp-heading">
         <h2 id="exp-heading" className="explore__section-title">Expériences à vivre</h2>
         {filteredExperiences.length === 0 ? (
-          <p className="notice">Aucune expérience ne correspond à cette recherche.</p>
+          <p className="notice">Essayez un autre mot.</p>
         ) : (
           <ul className="explore__grid">
             {filteredExperiences.map((e) => (

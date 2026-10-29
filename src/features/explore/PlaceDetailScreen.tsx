@@ -89,11 +89,11 @@ export default function PlaceDetailScreen() {
       )}
 
       <section aria-label="Actions" className="explore-detail__section">
-        <h2>Et maintenant ?</h2>
+        <h2>Ce lieu vous a plu ?</h2>
         <p className="muted">
           {isVisited
-            ? "Vous avez déjà marqué ce lieu comme visité — merci pour cette découverte."
-            : "Vous avez visité ce lieu ? Marquez-le pour garder une trace de vos découvertes."}
+            ? "Une belle découverte, gardée dans votre carnet."
+            : "Notez-le dans votre carnet de découvertes."}
         </p>
         <div className="cluster">
           <button
@@ -105,7 +105,7 @@ export default function PlaceDetailScreen() {
               toggleVisited(place.id);
             }}
           >
-            {isVisited ? "Lieu visité ✓" : "Marquer comme visité"}
+            {isVisited ? "Découvert ✓" : "Je l'ai découvert"}
           </button>
           <Link to="/parler" className="btn btn-secondary">
             En parler avec MANA

@@ -60,13 +60,9 @@ export default function SleepScreen() {
         {done ? (
           <div className="stack stack-4 center">
             <h2>Bonne nuit.</h2>
-            <p className="muted">
-              Vous avez terminé la séance de dépose du soir. MANA vous
-              accompagnera encore demain.
-            </p>
             <div className="cluster center">
               <button className="btn btn-secondary" onClick={start}>
-                Refaire la séance
+                Recommencer
               </button>
               <Link to="/parler?avec=luna" className="btn btn-ghost">
                 Parler à Luna
@@ -81,18 +77,17 @@ export default function SleepScreen() {
             <h2>{step.title}</h2>
             <p className="lead center-text">{step.body}</p>
             <button className="btn btn-primary btn-lg" onClick={next}>
-              {stepIndex + 1 >= STEPS.length ? "Terminer la séance" : "Étape suivante"}
+              {stepIndex + 1 >= STEPS.length ? "Terminer" : "Continuer"}
             </button>
           </div>
         ) : (
           <div className="stack stack-5 center">
             <span className="mode__glyph" aria-hidden="true">☾</span>
             <p className="lead center-text">
-              Une séance guidée très courte pour déposer la journée et préparer
-              le sommeil.
+              Trois étapes courtes pour vous préparer à dormir.
             </p>
             <button className="btn btn-primary btn-lg" onClick={start}>
-              Commencer la séance
+              Commencer
             </button>
           </div>
         )}
@@ -101,9 +96,7 @@ export default function SleepScreen() {
       <div className="demo-banner" role="note">
         <span aria-hidden="true">✦</span>
         <p>
-          <strong>Première version.</strong> Les séances guidées audio (voix,
-          paysages sonores) arriveront avec l'intégration des capacités audio
-          de MANA — voir le README.
+          <strong>Bientôt.</strong> Les voix guidées arrivent avec l'audio de MANA.
         </p>
       </div>
     </div>

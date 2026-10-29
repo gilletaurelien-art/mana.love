@@ -16,7 +16,10 @@ import {
 interface LanguageContextValue {
   langue: Langue;
   setLangue: (l: Langue) => void;
-  t: (cle: CleI18n) => string;
+  t: (
+    cle: CleI18n,
+    vars?: Record<string, string | number>
+  ) => string;
 }
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
@@ -31,7 +34,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         setLangueState(l);
         ecrireLangue(l);
       },
-      t: (cle) => traduire(cle, langue),
+      t: (cle, vars) => traduire(cle, langue, vars),
     }),
     [langue]
   );

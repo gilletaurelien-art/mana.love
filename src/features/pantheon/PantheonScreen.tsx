@@ -14,9 +14,8 @@ export default function PantheonScreen() {
         <p className="eyebrow">Mes univers</p>
         <h1>Le panthéon de l'amour</h1>
         <p className="lead">
-          Chaque personnalité est un univers distinct, avec sa voix et son
-          histoire. Les rencontres se déverrouillent au fil de vos découvertes
-          — jamais au fil du temps passé devant l'écran.
+          Chaque déesse a sa voix et son histoire. Vos découvertes ouvrent
+          de nouvelles rencontres.
         </p>
       </div>
 

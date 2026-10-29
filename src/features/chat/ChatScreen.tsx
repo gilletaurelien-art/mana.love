@@ -125,11 +125,11 @@ export default function ChatScreen() {
             ))}
         </div>
         {!checked ? (
-          <p className="tag">Vérification du serveur…</p>
+          <p className="tag">Connexion…</p>
         ) : provider.isLive ? (
-          <p className="tag">Mistral · connecté</p>
+          <p className="tag">MANA · en ligne</p>
         ) : (
-          <p className="tag">Mode démo local</p>
+          <p className="tag">Mode démo</p>
         )}
       </div>
 
@@ -151,10 +151,8 @@ export default function ChatScreen() {
 
         {checked && !provider.isLive && (
           <div className="chat__demo-notice">
-            <strong>Mode démonstration.</strong> Aucun fournisseur d'IA n'est
-            configuré : les réponses de {active.name} sont générées par un
-            script local, clairement identifiées comme telles. Ajoutez
-            MISTRAL_API_KEY dans .env.local pour activer Mistral côté serveur.
+            <strong>Mode démo.</strong> Les réponses viennent d'un script
+            local. Ajoutez MISTRAL_API_KEY pour la vraie voix de {active.name}.
           </div>
         )}
 

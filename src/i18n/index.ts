@@ -1,16 +1,11 @@
 /**
  * i18n — fondation internationale de mana.love.
  *
- * L'app se veut internationale : les libellés vivent dans un
- * dictionnaire, jamais en dur dans les composants.
- *
- * Règles :
+ * Ton éditorial : simple, épuré, direct. Zéro blabla, zéro négativité.
  * - français par défaut, anglais en seconde langue ;
- * - une clé manquante affiche la chaîne française — jamais du faux
- *   contenu, jamais une clé brute à l'écran ;
- * - l'anglais ne remplace JAMAIS le vouvoiement : « you » est le
- *   vouvoiement anglais (pas de « thou ») — la voix de la Déesse
- *   reste celle de l'arbitrage du 13/10 dans toutes les langues.
+ * - une clé manquante affiche la chaîne française — jamais de clé brute ;
+ * - « you » en anglais = vouvoiement, la voix de la Déesse dans toutes
+ *   les langues (arbitrage du 13/10).
  */
 
 export type Langue = "fr" | "en";
@@ -35,8 +30,17 @@ export type CleI18n =
   | "home.door.decouvrir"
   | "home.progression"
   | "home.points"
+  | "home.progression.suivante"
+  | "home.progression.rencontrees"
   | "home.invite.title"
   | "home.invite.desc"
+  | "home.moments.sommeil"
+  | "home.moments.sommeilDesc"
+  | "home.moments.action"
+  | "home.moments.actionDesc"
+  | "home.moments.radio"
+  | "home.moments.radioDesc"
+  | "home.pantheon.titre"
   | "common.confidentialite"
   | "common.nouvelleConversation"
   | "common.envoyer"
@@ -51,18 +55,25 @@ const FR: Record<CleI18n, string> = {
   "nav.ecouter": "Écouter",
   "home.promise": "Aimer la vie.",
   "home.door.talk": "Parler avec MANA",
-  "home.door.talkDesc":
-    "Déposer ce qui pèse, réfléchir à voix haute, être encouragé à passer à l'action.",
+  "home.door.talkDesc": "Posez ce qui vous habite. MANA écoute.",
   "home.door.explore": "Explorer le monde",
-  "home.door.exploreDesc":
-    "Découvrir des lieux, des chemins et des expériences qui vous attendent, près de chez vous.",
+  "home.door.exploreDesc": "Des lieux et des expériences, près de chez vous.",
   "home.door.commencer": "Commencer",
   "home.door.decouvrir": "Découvrir",
   "home.progression": "Votre progression",
   "home.points": "points MANA",
-  "home.invite.title": "Et si vous marchiez sans destination aujourd'hui ?",
+  "home.progression.suivante": "Prochaine rencontre : {nom} · {points} points",
+  "home.progression.rencontrees": "{n} déesses rencontrées",
+  "home.invite.title": "Marchez sans destination, aujourd'hui",
   "home.invite.desc":
-    "MANA propose régulièrement une petite expérience à vivre dans le monde réel. Celle-ci prend vingt minutes et ne demande rien d'autre que votre curiosité.",
+    "Vingt minutes. Une règle simple. Laissez les rues choisir pour vous.",
+  "home.moments.sommeil": "Sommeil",
+  "home.moments.sommeilDesc": "Ralentir avant la nuit",
+  "home.moments.action": "Action",
+  "home.moments.actionDesc": "Un geste pour aujourd'hui",
+  "home.moments.radio": "MANAradio",
+  "home.moments.radioDesc": "La pluie, le vent, la mer",
+  "home.pantheon.titre": "Le panthéon s'ouvre à vous",
   "common.confidentialite": "Confidentialité & données",
   "common.nouvelleConversation": "Nouvelle conversation",
   "common.envoyer": "Envoyer",
@@ -78,18 +89,25 @@ const EN: Partial<Record<CleI18n, string>> = {
   "nav.ecouter": "Listen",
   "home.promise": "To love life.",
   "home.door.talk": "Talk with MANA",
-  "home.door.talkDesc":
-    "Set down what weighs, think out loud, be encouraged to take action.",
+  "home.door.talkDesc": "Share what moves you. MANA listens.",
   "home.door.explore": "Explore the world",
-  "home.door.exploreDesc":
-    "Discover places, paths, and experiences waiting for you, close to where you are.",
+  "home.door.exploreDesc": "Places and experiences, near you.",
   "home.door.commencer": "Begin",
   "home.door.decouvrir": "Discover",
   "home.progression": "Your progression",
   "home.points": "MANA points",
-  "home.invite.title": "What if you walked without a destination today?",
+  "home.progression.suivante": "Next meeting: {nom} · {points} points",
+  "home.progression.rencontrees": "{n} goddesses met",
+  "home.invite.title": "Walk without a destination, today",
   "home.invite.desc":
-    "MANA regularly offers a small experience to live in the real world. This one takes twenty minutes and asks for nothing but your curiosity.",
+    "Twenty minutes. One simple rule. Let the streets choose for you.",
+  "home.moments.sommeil": "Sleep",
+  "home.moments.sommeilDesc": "Slow down before night",
+  "home.moments.action": "Action",
+  "home.moments.actionDesc": "One gesture for today",
+  "home.moments.radio": "MANAradio",
+  "home.moments.radioDesc": "Rain, wind, sea",
+  "home.pantheon.titre": "The pantheon opens to you",
   "common.confidentialite": "Privacy & data",
   "common.nouvelleConversation": "New conversation",
   "common.envoyer": "Send",
@@ -102,13 +120,20 @@ const DICTIONNAIRES: Record<Langue, Partial<Record<CleI18n, string>>> = {
   en: EN,
 };
 
-/**
- * Traduction honnête : la langue si traduite, sinon le français.
- * Jamais de clé brute, jamais de contenu inventé.
- */
-export function traduire(cle: CleI18n, langue: Langue = "fr"): string {
+/** Traduction honnête : la langue si traduite, sinon le français. */
+export function traduire(
+  cle: CleI18n,
+  langue: Langue = "fr",
+  vars?: Record<string, string | number>
+): string {
   const dico = DICTIONNAIRES[langue];
-  return dico[cle] ?? FR[cle];
+  let texte = dico[cle] ?? FR[cle];
+  if (vars) {
+    for (const [k, v] of Object.entries(vars)) {
+      texte = texte.replaceAll(`{${k}}`, String(v));
+    }
+  }
+  return texte;
 }
 
 /** La langue mémorisée de la personne (localStorage), fr par défaut. */
