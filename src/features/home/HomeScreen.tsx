@@ -19,7 +19,6 @@ export default function HomeScreen() {
         <h1 className="display">
           {t("home.promise").replace(" la vie.", "")} <em>la vie.</em>
         </h1>
-        <p className="lead">{t("home.intro")}</p>
       </section>
 
       <section aria-label="Deux portes" className="home__doors">

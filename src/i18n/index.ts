@@ -27,7 +27,6 @@ export type CleI18n =
   | "nav.univers"
   | "nav.ecouter"
   | "home.promise"
-  | "home.intro"
   | "home.door.talk"
   | "home.door.talkDesc"
   | "home.door.explore"
@@ -51,8 +50,6 @@ const FR: Record<CleI18n, string> = {
   "nav.univers": "Univers",
   "nav.ecouter": "Écouter",
   "home.promise": "Aimer la vie.",
-  "home.intro":
-    "MANA est une compagne chaleureuse qui vous aide à remarquer le monde, à agir concrètement et à vous reposer — parce que la vie se vit dehors, pas derrière un écran.",
   "home.door.talk": "Parler avec MANA",
   "home.door.talkDesc":
     "Déposer ce qui pèse, réfléchir à voix haute, être encouragé à passer à l'action.",
@@ -80,8 +77,6 @@ const EN: Partial<Record<CleI18n, string>> = {
   "nav.univers": "Universes",
   "nav.ecouter": "Listen",
   "home.promise": "To love life.",
-  "home.intro":
-    "MANA is a warm companion who helps you notice the world, take real action, and rest — because life is lived outdoors, not behind a screen.",
   "home.door.talk": "Talk with MANA",
   "home.door.talkDesc":
     "Set down what weighs, think out loud, be encouraged to take action.",

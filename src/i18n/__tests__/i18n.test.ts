@@ -13,8 +13,8 @@ describe("i18n — fondation internationale", () => {
   });
 
   it("l'anglais garde le vouvoiement : « you », jamais « thou »", () => {
-    const intro = traduire("home.intro", "en");
-    expect(intro).toContain("you");
+    const desc = traduire("home.door.exploreDesc", "en");
+    expect(desc).toContain("you");
   });
 
   it("une clé non traduite retombe sur le français — jamais de clé brute", () => {
