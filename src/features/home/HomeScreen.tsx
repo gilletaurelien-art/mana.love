@@ -15,7 +15,6 @@ export default function HomeScreen() {
   return (
     <div className="home">
       <section className="home__hero">
-        <p className="eyebrow">MANA.love</p>
         <h1 className="display">
           {t("home.promise").replace(" la vie.", "")} <em>la vie.</em>
         </h1>
