@@ -47,7 +47,8 @@ export type CleI18n =
   | "common.ecouter"
   | "common.retour";
 
-const FR: Record<CleI18n, string> = {
+/** Dictionnaire français complet — référence pour toutes les langues. */
+export const FR: Record<CleI18n, string> = {
   "nav.accueil": "Accueil",
   "nav.parler": "Parler",
   "nav.explorer": "Explorer",
