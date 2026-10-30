@@ -45,9 +45,7 @@ export default function PantheonScreen() {
                   </div>
                 </div>
 
-                {p.ame !== null && (
-                  <p className="pantheon-card__ame">{p.ame}</p>
-                )}
+                <p className="pantheon-card__ame">{p.tagline}</p>
 
                 {status.unlocked ? (
                   <div className="pantheon-card__actions">
