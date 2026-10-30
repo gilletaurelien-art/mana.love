@@ -5,6 +5,7 @@ import PageShell from "@/components/PageShell";
 import { ProgressionProvider } from "@/app/ProgressionContext";
 import { ChatProviderProvider } from "@/app/ChatProviderContext";
 import { LanguageProvider } from "@/app/LanguageContext";
+import { installerPhaseTempsReel } from "@/components/AtmosphereTemps";
 import HomeScreen from "@/features/home/HomeScreen";
 import ChatScreen from "@/features/chat/ChatScreen";
 import ExploreScreen from "@/features/explore/ExploreScreen";
@@ -19,6 +20,8 @@ import "@/styles/tokens.css";
 import "@/styles/components.css";
 import "@/components/nav.css";
 import "@/features/home/home.css";
+
+installerPhaseTempsReel();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

@@ -1,4 +1,4 @@
-/** Styles partagés du système de design MANA.love — palette V1. */
+/** Styles partagés — surface unique, lumière, silence. */
 
 /* ---------- Layout ---------- */
 .app-shell {
@@ -6,19 +6,20 @@
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
+  position: relative;
 }
 
 .app-main {
   flex: 1;
   width: 100%;
-  max-width: 1120px;
+  max-width: 1080px;
   margin: 0 auto;
-  padding: var(--sp-5) var(--sp-4) calc(var(--sp-7) + 56px);
+  padding: var(--sp-6) var(--sp-5) calc(var(--sp-8) + 64px);
 }
 
 @media (min-width: 768px) {
   .app-main {
-    padding: var(--sp-6) var(--sp-5) var(--sp-8);
+    padding: var(--sp-7) var(--sp-6) var(--sp-9);
   }
 }
 
@@ -32,11 +33,6 @@
 .stack-4 { gap: var(--sp-4); }
 .stack-5 { gap: var(--sp-5); }
 .stack-6 { gap: var(--sp-6); }
-
-.row {
-  display: flex;
-  align-items: center;
-}
 
 .cluster {
   display: flex;
@@ -52,45 +48,92 @@
   gap: var(--sp-4);
 }
 
-/* ---------- Atmosphère ---------- */
+/* ---------- Atmosphère : le ciel, pas un dégradé de fond ---------- */
+
 .atmosphere {
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(1100px 700px at 78% -12%, rgba(127, 179, 176, 0.10), transparent 60%),
-    radial-gradient(900px 620px at 12% 8%, rgba(212, 169, 106, 0.05), transparent 55%),
-    radial-gradient(1400px 900px at 50% 115%, rgba(22, 38, 63, 0.6), transparent 65%),
+    radial-gradient(
+      1200px 800px at var(--phase-pos),
+      var(--phase-teinte),
+      transparent 62%
+    ),
+    radial-gradient(
+      900px 700px at 8% 108%,
+      rgba(31, 51, 82, 0.35),
+      transparent 60%
+    ),
     linear-gradient(180deg, var(--c-nuit-900) 0%, var(--c-nuit-950) 100%);
+  transition: background var(--t-lent);
 }
 
+/* Les étoiles : trois voiles scintillants à des rythmes différents. */
+.atmosphere::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1.4px 1.4px at 12% 18%, rgba(243, 235, 221, 0.5), transparent 100%),
+    radial-gradient(1px 1px at 31% 42%, rgba(243, 235, 221, 0.35), transparent 100%),
+    radial-gradient(1.6px 1.6px at 56% 12%, rgba(243, 235, 221, 0.42), transparent 100%),
+    radial-gradient(1px 1px at 74% 33%, rgba(243, 235, 221, 0.30), transparent 100%),
+    radial-gradient(1.4px 1.4px at 88% 9%, rgba(243, 235, 221, 0.45), transparent 100%),
+    radial-gradient(1px 1px at 6% 55%, rgba(243, 235, 221, 0.22), transparent 100%),
+    radial-gradient(1.2px 1.2px at 43% 71%, rgba(243, 235, 221, 0.28), transparent 100%),
+    radial-gradient(1px 1px at 92% 62%, rgba(243, 235, 221, 0.33), transparent 100%),
+    radial-gradient(1.3px 1.3px at 22% 88%, rgba(243, 235, 221, 0.25), transparent 100%),
+    radial-gradient(1px 1px at 66% 85%, rgba(243, 235, 221, 0.38), transparent 100%);
+  animation: scintille var(--t-respire) infinite alternate;
+}
+
+@keyframes scintille {
+  from { opacity: 0.55; }
+  to { opacity: calc(var(--phase-intensite) * 0.9); }
+}
+
+/* Exploration : le jour se lève, la surface s'éclaire d'elle-même. */
 .atmosphere--dawn {
-  /* Pages d'exploration : surfaces plus claires, lumière du jour — Brume vivante. */
   background:
-    radial-gradient(1200px 800px at 82% -18%, rgba(243, 235, 221, 0.10), transparent 60%),
-    radial-gradient(900px 640px at 8% -8%, rgba(127, 179, 176, 0.14), transparent 58%),
-    linear-gradient(180deg, #1a2237 0%, var(--c-nuit-900) 45%, #242f4d 100%);
+    radial-gradient(
+      1300px 900px at var(--phase-pos),
+      rgba(195, 222, 219, calc(0.12 * var(--phase-intensite))),
+      transparent 62%
+    ),
+    radial-gradient(
+      1000px 760px at 85% 115%,
+      rgba(212, 169, 106, 0.05),
+      transparent 60%
+    ),
+    linear-gradient(180deg, #18203a 0%, var(--c-nuit-900) 40%, #1a2340 100%);
+}
+
+.atmosphere--dawn::before {
+  opacity: 0.35;
 }
 
 /* ---------- Typographie ---------- */
+
 .eyebrow {
   font-family: var(--font-body);
   font-size: var(--fs-caption);
   font-weight: 600;
-  letter-spacing: 0.22em;
+  letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
   color: var(--c-vague-400);
 }
 
 .lead {
   font-size: var(--fs-lead);
-  color: var(--c-ivoire-mi);
-  max-width: 62ch;
+  color: var(--c-ink-mid);
+  max-width: 58ch;
+  font-weight: 380;
 }
 
 .muted {
-  color: var(--c-ivoire-mi);
+  color: var(--c-ink-mid);
 }
 
 .quiet {
@@ -100,91 +143,95 @@
 
 .display {
   font-size: var(--fs-hero);
-  color: var(--c-ink-high);
+  line-height: var(--lh-hero);
+  letter-spacing: var(--tracking-hero);
+  color: var(--c-ivoire);
+  font-weight: 420;
 }
 
 .display em {
   font-style: italic;
-  /* Or rare : réservé à la phrase signature. */
-  color: var(--c-or-mat);
+  color: var(--c-or-vif);
 }
 
-/* ---------- Boutons ---------- */
+/* ---------- Boutons : aucun chrome, la lumière suffit ---------- */
+
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--sp-2);
-  padding: 0.7rem 1.5rem;
+  padding: 0.8rem 1.75rem;
   border-radius: var(--r-pill);
-  border: 1px solid transparent;
+  border: none;
   font-family: var(--font-body);
-  font-size: var(--fs-body);
+  font-size: var(--fs-small);
   font-weight: 600;
   line-height: 1.2;
   text-decoration: none;
-  transition: transform var(--t-fast), box-shadow var(--t-fast), background var(--t-fast), border-color var(--t-fast);
-  min-height: 44px;
+  transition: transform var(--t-fast), box-shadow var(--t-med), color var(--t-fast);
+  min-height: 48px;
 }
 
 .btn:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
+/* Primaire : le texte devient or, le halo naît au survol. */
 .btn-primary {
-  background: var(--c-or-mat);
-  color: var(--c-nuit-900);
+  background: transparent;
+  color: var(--c-or-vif);
+  box-shadow: inset 0 0 0 1px rgba(212, 169, 106, 0.35);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--c-or-vif);
+  box-shadow:
+    inset 0 0 0 1px rgba(212, 169, 106, 0.65),
+    0 0 40px rgba(212, 169, 106, 0.18);
   transform: translateY(-1px);
 }
 
+/* Secondaire : vague, la respiration. */
 .btn-secondary {
-  background: rgba(22, 38, 63, 0.7);
-  border-color: rgba(127, 179, 176, 0.35);
-  color: var(--c-ivoire);
+  background: var(--surf-2);
+  color: var(--c-vague-soft);
+  box-shadow: inset 0 0 0 1px rgba(127, 179, 176, 0.20);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  border-color: var(--c-vague-400);
-  background: rgba(39, 51, 82, 0.8);
+  box-shadow: inset 0 0 0 1px rgba(127, 179, 176, 0.5);
+  color: var(--c-vague-soft);
 }
 
 .btn-ghost {
   background: transparent;
-  color: var(--c-ivoire-mi);
-  border-color: rgba(154, 148, 137, 0.3);
+  color: var(--c-ink-mid);
 }
 
 .btn-ghost:hover:not(:disabled) {
-  color: var(--c-ink-high);
-  border-color: rgba(154, 148, 137, 0.55);
+  color: var(--c-ivoire);
+  box-shadow: inset 0 0 0 1px rgba(217, 210, 195, 0.18);
 }
 
 .btn-sm {
-  padding: 0.45rem 1rem;
-  font-size: var(--fs-small);
+  padding: 0.45rem 1.1rem;
+  font-size: var(--fs-caption);
   min-height: 36px;
 }
 
 .btn-lg {
-  padding: 0.95rem 2.2rem;
-  font-size: var(--fs-lead);
+  padding: 1rem 2.4rem;
+  font-size: var(--fs-body);
 }
 
-.btn-block {
-  width: 100%;
-}
+/* ---------- Surfaces : champs lumineux, pas de boîtes ---------- */
 
-/* ---------- Surfaces ---------- */
 .surface {
-  background: linear-gradient(180deg, rgba(22, 38, 63, 0.45), rgba(23, 31, 56, 0.55));
-  border: 1px solid rgba(127, 179, 176, 0.10);
+  background: var(--surf-1);
   border-radius: var(--r-lg);
-  box-shadow: var(--shadow-soft);
+  box-shadow: inset 0 0 0 1px rgba(243, 235, 221, 0.06);
+  backdrop-filter: blur(6px);
 }
 
 .surface-pad {
@@ -192,64 +239,73 @@
 }
 
 .surface--interact {
-  transition: border-color var(--t-fast), transform var(--t-fast), box-shadow var(--t-fast);
+  transition:
+    box-shadow var(--t-med),
+    transform var(--t-med),
+    background var(--t-med);
 }
 
 .surface--interact:hover {
-  border-color: rgba(212, 169, 106, 0.35);
+  background: var(--surf-2);
+  box-shadow: inset 0 0 0 1px rgba(212, 169, 106, 0.22);
   transform: translateY(-2px);
 }
 
 /* ---------- Tags ---------- */
+
 .tag {
   display: inline-flex;
   align-items: center;
   gap: var(--sp-1);
   font-size: var(--fs-caption);
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.10em;
   text-transform: uppercase;
-  padding: 0.25rem 0.65rem;
+  padding: 0.28rem 0.75rem;
   border-radius: var(--r-pill);
-  background: rgba(127, 179, 176, 0.12);
-  color: var(--c-vague-400);
+  background: rgba(127, 179, 176, 0.10);
+  color: var(--c-vague-300);
 }
 
 .tag--demo {
-  background: rgba(212, 169, 106, 0.12);
+  background: rgba(212, 169, 106, 0.10);
   color: var(--c-or-mat);
 }
 
 .tag--locked {
-  background: rgba(154, 148, 137, 0.14);
+  background: rgba(139, 133, 120, 0.10);
   color: var(--c-ink-low);
 }
 
 /* ---------- Formulaires ---------- */
+
 .field-label {
   display: block;
-  font-size: var(--fs-small);
+  font-size: var(--fs-caption);
   font-weight: 600;
-  color: var(--c-ivoire-mi);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-ink-low);
   margin-bottom: var(--sp-2);
 }
 
 .text-input,
 textarea.text-input {
   width: 100%;
-  background: rgba(7, 11, 23, 0.6);
-  border: 1px solid rgba(127, 179, 176, 0.18);
+  background: rgba(7, 11, 23, 0.45);
+  border: none;
+  box-shadow: inset 0 0 0 1px rgba(243, 235, 221, 0.10);
   border-radius: var(--r-md);
-  color: var(--c-ink-high);
+  color: var(--c-ivoire);
   font-family: var(--font-body);
   font-size: var(--fs-body);
-  padding: 0.75rem 1rem;
-  transition: border-color var(--t-fast);
+  padding: 0.85rem 1.1rem;
+  transition: box-shadow var(--t-med);
 }
 
 .text-input:focus {
   outline: none;
-  border-color: var(--c-vague-400);
+  box-shadow: inset 0 0 0 1px rgba(212, 169, 106, 0.55);
 }
 
 .text-input::placeholder {
@@ -257,63 +313,69 @@ textarea.text-input {
 }
 
 /* ---------- Notices ---------- */
+
 .notice {
   border-radius: var(--r-md);
-  padding: var(--sp-4);
-  border: 1px solid rgba(127, 179, 176, 0.3);
-  background: rgba(127, 179, 176, 0.08);
+  padding: var(--sp-4) var(--sp-5);
+  background: rgba(127, 179, 176, 0.07);
+  box-shadow: inset 0 0 0 1px rgba(127, 179, 176, 0.16);
   font-size: var(--fs-small);
   color: var(--c-ivoire);
 }
 
 .notice--error {
-  border-color: rgba(217, 154, 140, 0.4);
-  background: rgba(217, 154, 140, 0.08);
+  background: rgba(201, 122, 106, 0.07);
+  box-shadow: inset 0 0 0 1px rgba(201, 122, 106, 0.25);
   color: #f0d5cd;
 }
 
 .notice--info {
-  border-color: rgba(127, 179, 176, 0.35);
-  background: rgba(127, 179, 176, 0.1);
+  background: rgba(127, 179, 176, 0.07);
+  box-shadow: inset 0 0 0 1px rgba(127, 179, 176, 0.20);
   color: var(--c-ivoire);
 }
 
 /* ---------- Progression ---------- */
+
 .progress {
-  height: 6px;
+  height: 3px;
   border-radius: var(--r-pill);
-  background: rgba(154, 148, 137, 0.2);
+  background: rgba(139, 133, 120, 0.18);
   overflow: hidden;
 }
 
 .progress__fill {
   height: 100%;
   border-radius: var(--r-pill);
-  /* L'or apparaît précisément ici : progression. */
-  background: linear-gradient(90deg, var(--c-or-mat), var(--c-or-mat));
-  transition: width var(--t-med);
+  background: linear-gradient(90deg, var(--c-or-mat), var(--c-or-vif));
+  box-shadow: 0 0 16px rgba(212, 169, 106, 0.35);
+  transition: width var(--t-lent);
 }
 
 /* ---------- En-tête de page ---------- */
+
 .page-header {
-  padding-top: var(--sp-3);
-  margin-bottom: var(--sp-6);
+  padding-top: var(--sp-4);
+  margin-bottom: var(--sp-7);
 }
 
 .page-header h1 {
   font-size: var(--fs-h1);
-  margin-top: var(--sp-2);
+  line-height: var(--lh-tight);
+  margin-top: var(--sp-3);
+  letter-spacing: var(--tracking-hero);
 }
 
 /* ---------- Bandeau démo ---------- */
+
 .demo-banner {
   display: flex;
   gap: var(--sp-3);
   align-items: flex-start;
-  border: 1px dashed rgba(127, 179, 176, 0.4);
   border-radius: var(--r-md);
   padding: var(--sp-3) var(--sp-4);
-  background: rgba(127, 179, 176, 0.06);
+  background: rgba(212, 169, 106, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(212, 169, 106, 0.14);
   font-size: var(--fs-small);
   color: var(--c-vague-soft);
 }
@@ -322,16 +384,22 @@ textarea.text-input {
   color: var(--c-or-mat);
 }
 
-/* ---------- Squelette ---------- */
+/* ---------- Squelette : le balayage, jamais le spinner ---------- */
+
 .skeleton-line {
   height: 12px;
   border-radius: var(--r-pill);
-  background: linear-gradient(90deg, rgba(154, 148, 137, 0.12) 25%, rgba(154, 148, 137, 0.24) 50%, rgba(154, 148, 137, 0.12) 75%);
+  background: linear-gradient(
+    90deg,
+    rgba(139, 133, 120, 0.10) 25%,
+    rgba(139, 133, 120, 0.20) 50%,
+    rgba(139, 133, 120, 0.10) 75%
+  );
   background-size: 200% 100%;
-  animation: shimmer 1.4s infinite;
+  animation: balayage 1.6s infinite;
 }
 
-@keyframes shimmer {
+@keyframes balayage {
   from { background-position: 200% 0; }
   to { background-position: -200% 0; }
 }
@@ -343,6 +411,7 @@ textarea.text-input {
 }
 
 /* ---------- Visuellement caché ---------- */
+
 .visually-hidden {
   position: absolute;
   width: 1px;

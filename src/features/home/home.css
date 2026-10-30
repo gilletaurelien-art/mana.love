@@ -1,26 +1,30 @@
 .home {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-6);
+  gap: var(--sp-8);
 }
 
+/* ---------- Hero : la promesse, éditoriale, ample ---------- */
+
 .home__hero {
-  padding: var(--sp-6) 0 var(--sp-2);
+  padding: var(--sp-9) 0 var(--sp-2);
   text-align: center;
+  min-height: 46vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .home__hero .display {
-  margin: var(--sp-3) 0 var(--sp-4);
-}
-
-.home__hero .lead {
   margin: 0 auto;
+  max-width: 14ch;
 }
 
-/* ---------- Portes ---------- */
+/* ---------- Portes : deux mondes, aucun chrome ---------- */
+
 .home__doors {
   display: grid;
-  gap: var(--sp-4);
+  gap: var(--sp-5);
   grid-template-columns: 1fr;
 }
 
@@ -33,66 +37,85 @@
 .door {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-2);
-  padding: var(--sp-6) var(--sp-5);
-  border-radius: var(--r-lg);
+  gap: var(--sp-3);
+  padding: var(--sp-7) var(--sp-6);
+  border-radius: var(--r-xl);
   text-decoration: none;
-  min-height: 260px;
+  min-height: 300px;
   position: relative;
   overflow: hidden;
-  transition: transform var(--t-fast), box-shadow var(--t-fast);
+  transition: transform var(--t-med), box-shadow var(--t-med);
 }
 
 .door:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-soft);
+  transform: translateY(-4px);
 }
 
-/* La porte conversation reste dans la nuit MANA. */
+/* La porte conversation vit dans la nuit. */
 .door--night {
   background:
-    radial-gradient(420px 260px at 85% 15%, rgba(127, 179, 176, 0.10), transparent 65%),
-    linear-gradient(160deg, var(--c-ocean-800), var(--c-nuit-950) 75%);
-  border: 1px solid rgba(127, 179, 176, 0.18);
-  color: var(--c-ink-high);
+    radial-gradient(480px 320px at 85% 12%, rgba(127, 179, 176, 0.10), transparent 65%),
+    linear-gradient(165deg, var(--c-ocean-800), var(--c-nuit-950) 78%);
+  box-shadow: inset 0 0 0 1px rgba(127, 179, 176, 0.12);
+  color: var(--c-ivoire);
 }
 
-/* La porte exploration s'ouvre sur la brume vivante — lumière du jour. */
+.door--night:hover {
+  box-shadow:
+    inset 0 0 0 1px rgba(212, 169, 106, 0.35),
+    0 24px 70px rgba(7, 11, 23, 0.5);
+}
+
+/* La porte exploration s'ouvre sur le jour. */
 .door--dawn {
   background:
-    radial-gradient(420px 260px at 15% 20%, rgba(243, 235, 221, 0.14), transparent 62%),
-    radial-gradient(380px 240px at 85% 80%, rgba(127, 179, 176, 0.16), transparent 60%),
-    linear-gradient(160deg, #31435c, #243349 60%, var(--c-ocean-800));
-  border: 1px solid rgba(127, 179, 176, 0.28);
-  color: var(--c-ink-high);
+    radial-gradient(480px 320px at 15% 18%, rgba(195, 222, 219, 0.16), transparent 62%),
+    radial-gradient(400px 260px at 85% 82%, rgba(127, 179, 176, 0.10), transparent 60%),
+    linear-gradient(165deg, #33455e, #25354e 58%, var(--c-ocean-800));
+  box-shadow: inset 0 0 0 1px rgba(195, 222, 219, 0.16);
+  color: var(--c-ivoire);
+}
+
+.door--dawn:hover {
+  box-shadow:
+    inset 0 0 0 1px rgba(195, 222, 219, 0.45),
+    0 24px 70px rgba(7, 11, 23, 0.5);
 }
 
 .door__title {
   font-family: var(--font-display);
   font-size: var(--fs-h2);
-  line-height: 1.1;
+  line-height: 1.08;
+  letter-spacing: var(--tracking-hero);
+  font-weight: 480;
 }
 
 .door__desc {
-  color: var(--c-ivoire-mi);
+  color: var(--c-ink-mid);
   font-size: var(--fs-body);
-  max-width: 40ch;
+  max-width: 36ch;
+  font-weight: 380;
 }
 
 .door__cta {
   margin-top: auto;
   font-weight: 600;
-  color: var(--c-vague-soft);
   font-size: var(--fs-small);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
+  color: var(--c-vague-soft);
+  transition: letter-spacing var(--t-med);
 }
 
-/* Or rare : seul l'appel à la conversation porte la signature dorée. */
+.door:hover .door__cta {
+  letter-spacing: 0.14em;
+}
+
 .door--night .door__cta {
-  color: var(--c-or-mat);
+  color: var(--c-or-vif);
 }
 
-/* ---------- Moments ---------- */
+/* ---------- Moments : une respiration, pas une rangée de cartes ---------- */
+
 .home__moments {
   display: grid;
   gap: var(--sp-3);
@@ -109,27 +132,34 @@
   display: flex;
   align-items: center;
   gap: var(--sp-4);
-  padding: var(--sp-4);
+  padding: var(--sp-4) var(--sp-5);
   text-decoration: none;
-  color: var(--c-ink-high);
+  color: var(--c-ivoire);
+  border-radius: var(--r-lg);
 }
 
 .moment-card__glyph {
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   color: var(--c-vague-400);
-  width: 48px;
-  height: 48px;
+  width: 46px;
+  height: 46px;
   display: grid;
   place-items: center;
   border-radius: 50%;
   background: rgba(127, 179, 176, 0.08);
-  border: 1px solid rgba(127, 179, 176, 0.22);
   flex-shrink: 0;
+  transition: box-shadow var(--t-med), color var(--t-med);
+}
+
+.moment-card:hover .moment-card__glyph {
+  box-shadow: 0 0 24px rgba(127, 179, 176, 0.25);
+  color: var(--c-vague-soft);
 }
 
 .moment-card strong {
   display: block;
   font-size: var(--fs-body);
+  font-weight: 600;
 }
 
 .moment-card .muted {
@@ -137,32 +167,39 @@
   display: block;
 }
 
-/* ---------- Progression ---------- */
+/* ---------- Progression : un fil, pas un tableau de bord ---------- */
+
 .home__progress {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-3);
+  gap: var(--sp-4);
 }
 
 .home__balance {
   font-family: var(--font-display);
   font-size: var(--fs-h3);
-  /* L'or a sa place ici : la progression est une signature. */
-  color: var(--c-or-mat);
+  color: var(--c-or-vif);
   white-space: nowrap;
+  font-weight: 480;
 }
 
-/* ---------- Invitation ---------- */
+/* ---------- Invitation : la phrase finale ---------- */
+
 .home__invite {
   text-align: center;
-  padding: var(--sp-6) 0;
-  border-top: 1px solid rgba(127, 179, 176, 0.12);
+  padding: var(--sp-8) 0 var(--sp-6);
 }
 
 .home__invite h2 {
-  margin: var(--sp-2) 0 var(--sp-3);
+  font-size: var(--fs-h2);
+  margin-bottom: var(--sp-3);
+  letter-spacing: var(--tracking-hero);
+  max-width: 22ch;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.15;
 }
 
 .home__invite .lead {
-  margin: 0 auto var(--sp-4);
+  margin: 0 auto var(--sp-5);
 }

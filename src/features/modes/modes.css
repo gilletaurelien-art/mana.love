@@ -1,23 +1,29 @@
+/* Modes : sommeil, action, radio — le crépuscule, respiration lente. */
+
 .mode {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-5);
-  max-width: 760px;
+  gap: var(--sp-6);
+  max-width: 720px;
   margin: 0 auto;
 }
 
 .mode__stage {
-  min-height: 320px;
+  min-height: 380px;
   display: grid;
   place-items: center;
+  border-radius: var(--r-xl);
   background:
-    radial-gradient(500px 300px at 50% 0%, rgba(127, 179, 176, 0.10), transparent 65%),
-    linear-gradient(180deg, rgba(22, 38, 63, 0.5), rgba(23, 31, 56, 0.6));
+    radial-gradient(600px 380px at 50% 0%, rgba(127, 179, 176, 0.08), transparent 68%),
+    var(--surf-1);
+  box-shadow: inset 0 0 0 1px rgba(243, 235, 221, 0.06);
+  backdrop-filter: blur(6px);
 }
 
 .mode__glyph {
-  font-size: 2.4rem;
+  font-size: 2.2rem;
   color: var(--c-or-vif);
+  text-shadow: 0 0 32px rgba(240, 207, 143, 0.35);
 }
 
 .center {
@@ -35,6 +41,7 @@
 }
 
 /* ---------- Radio ---------- */
+
 .radio__list {
   list-style: none;
   margin: 0;
@@ -49,7 +56,8 @@
   justify-content: space-between;
   align-items: center;
   gap: var(--sp-4);
-  padding: var(--sp-4) var(--sp-5);
+  padding: var(--sp-5) var(--sp-6);
+  border-radius: var(--r-lg);
 }
 
 .radio__item .quiet {

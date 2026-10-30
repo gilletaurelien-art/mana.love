@@ -11,20 +11,19 @@ export default function PantheonScreen() {
   return (
     <div className="pantheon">
       <div className="page-header">
-        <p className="eyebrow">Mes univers</p>
-        <h1>Le panthéon de l'amour</h1>
+        <p className="eyebrow">Univers</p>
+        <h1>Le panthéon</h1>
         <p className="lead">
-          Chaque déesse a sa voix et son histoire. Vos découvertes ouvrent
-          de nouvelles rencontres.
+          Chaque déesse a sa voix et son histoire. Vos découvertes ouvrent de
+          nouvelles rencontres.
         </p>
       </div>
 
       <div className="demo-banner" role="note">
         <span aria-hidden="true">✦</span>
         <p>
-          <strong>Personnalités de démonstration.</strong> Les univers
-          présentés sont des fictions originales créées pour MANA.love. Ils ne
-          s'appuient sur aucun texte religieux ou culturel documenté.
+          <strong>Personnalités de démonstration.</strong> Univers de fiction,
+          créés pour MANA.love.
         </p>
       </div>
 
@@ -34,16 +33,22 @@ export default function PantheonScreen() {
           return (
             <li key={p.id} className="pantheon__item">
               <article
-                className={`pantheon-card surface surface--interact theme-${p.theme}${
+                className={`pantheon-card theme-${p.theme}${
                   status.unlocked ? "" : " pantheon-card--locked"
                 }`}
               >
-                <span className={`persona-orb persona-orb--lg persona-orb--${p.theme}`} aria-hidden="true" />
-                <div className="pantheon-card__body">
-                  <h2>{p.name}</h2>
-                  <p className="eyebrow">{p.epithet}</p>
-                  <p className="muted">{p.tagline}</p>
+                <div className="pantheon-card__head">
+                  <span className={`persona-orb persona-orb--${p.theme}`} aria-hidden="true" />
+                  <div className="pantheon-card__body">
+                    <h2>{p.name}</h2>
+                    <p className="eyebrow">{p.epithet}</p>
+                  </div>
                 </div>
+
+                {p.ame !== null && (
+                  <p className="pantheon-card__ame">{p.ame}</p>
+                )}
+
                 {status.unlocked ? (
                   <div className="pantheon-card__actions">
                     <Link to={`/parler?avec=${p.id}`} className="btn btn-primary btn-sm">
@@ -52,17 +57,17 @@ export default function PantheonScreen() {
                   </div>
                 ) : (
                   <div className="pantheon-card__lockinfo">
-                    <span className="tag tag--locked">🔒 Verrouillée</span>
+                    <span className="tag tag--locked">Verrouillée</span>
                     <span className="quiet">
-                      Se déverrouille à {p.unlock.kind === "mana-points" ? `${p.unlock.threshold} points` : "—"} (
-                      encore {status.remaining})
+                      {p.unlock.kind === "mana-points" ? `${p.unlock.threshold} points` : ""}
                     </span>
                   </div>
                 )}
+
                 {p.id !== "mana" && (
                   <details className="pantheon-card__lore">
-                    <summary className="quiet">Son histoire (fiction)</summary>
-                    <p className="muted">{p.lore}</p>
+                    <summary>Son histoire — fiction</summary>
+                    <p>{p.lore}</p>
                   </details>
                 )}
               </article>
