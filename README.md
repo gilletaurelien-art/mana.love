@@ -158,9 +158,21 @@ conforme, cache 10 minutes, pas de production à grande échelle). Sur la
 fiche d'un lieu réel, si une position a déjà été demandée pour
 l'exploration, un temps de marche estimé s'affiche.
 
-⚠️ Reste un agent qui *propose*, pas qui *agit* : aucune réservation,
-aucun itinéraire complet, pas de prise en compte météo. Premier pas vers
-« l'agent qui agit sur l'exploration », pas la fin du chemin.
+### Météo (Open-Meteo) — branché, sur la fiche d'un lieu réel
+
+Open-Meteo (gratuit, sans clé) alimente `src/domain/meteo.ts`, qui choisit
+la **meilleure fenêtre sèche** dans les 6 prochaines heures à l'endroit
+d'un lieu réel — pas seulement « il va pleuvoir », mais « il y a une
+fenêtre sèche vers 15h40 » quand elle existe, ou le dit explicitement
+sinon. La route serveur `server/weather.ts` proxifie l'API (cache 30 min,
+User-Agent conforme) ; `current_weather=true` et `timezone=auto` donnent
+l'heure "maintenant" et les prévisions horaires dans le **même fuseau**
+(celui du lieu), ce qui évite toute conversion de fuseau côté domaine.
+
+⚠️ Même agent qui *propose*, pas qui *agit* : aucune réservation, aucune
+alerte proactive, aucune notification, aucun déclenchement automatique
+d'une suggestion dans le chat. Deux premiers pas vers « l'agent qui agit
+sur l'exploration », pas la fin du chemin.
 
 ## Intégrations en attente
 
