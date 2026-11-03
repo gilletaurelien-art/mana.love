@@ -177,6 +177,21 @@ restent en mémoire le temps de la requête.
    être posés en variables d'environnement comme `MISTRAL_API_KEY` l'est
    déjà, et la migration appliquée.
 
+   **Moitié LECTURE du contrat, faite.** `/api/chat` accepte un champ
+   `souvenirs` optionnel, le filtre par `souvenirsOperants()` et le passe à
+   `buildSystemPrompt()` — un souvenir périmé ou désactivé n'atteint jamais
+   le modèle, et le prompt dit explicitement que ce sont des faits déclarés
+   et non des instructions. ⚠️ **Aucun client n'envoie encore ce champ** :
+   il n'existe ni base provisionnée ni écran pour produire des souvenirs.
+   La route est prête et testée, elle ne promet rien aujourd'hui.
+
+   **Moitié ÉCRITURE du contrat, à faire.** La compagne qui décide de
+   retenir un fait nouveau (`allowMemoryWrites` dans la forme mesurée de
+   `mana-presence`) demande de lire la sortie du modèle, d'en extraire un
+   souvenir, et de l'écrire avec le rôle de service. Rien de cela n'existe,
+   et le champ n'a volontairement **pas** été ajouté à la requête : un
+   champ inerte serait une promesse que le code ne tient pas.
+
 ## Points MANA — règles
 
 Les points MANA sont des **points de progression ludiques** — pas de monnaie,
