@@ -162,6 +162,20 @@ restent en mémoire le temps de la requête.
 4. **Serveur de production** — les routes `/api/*` sont servies par le
    plugin Vite en développement ; en production, il faut un runtime Node
    équivalent qui réutilise `server/chat.ts` et `server/geo.ts`.
+5. **Mémoire déclarée et comptes** — `src/domain/memoire.ts` porte le
+   contrat (genres, durées de péremption, calcul d'expiration), testé et
+   vérifié indépendamment de toute base. `supabase/migrations/0001_memoire_declaree.sql`
+   porte le schéma et les règles d'accès ligne par ligne — **vérifiées par
+   un test d'isolation réel** (deux comptes, chacun ne peut lire, modifier
+   ni supprimer que son propre souvenir ; l'écriture directe depuis un
+   compte est refusée, seul le serveur écrit). ⚠️ Rien de tout cela n'est
+   déployé : aucun projet n'est provisionné, aucune variable d'environnement
+   n'existe pour s'y connecter, et il n'y a encore aucun écran de connexion
+   (lien magique) ni logique client pour lire/écrire via ce schéma. C'est
+   une décision qui ne se prend pas depuis un dépôt de code : le fondateur
+   crée le projet, et seulement alors les identifiants (URL + clé) peuvent
+   être posés en variables d'environnement comme `MISTRAL_API_KEY` l'est
+   déjà, et la migration appliquée.
 
 ## Points MANA — règles
 
