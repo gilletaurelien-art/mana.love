@@ -15,10 +15,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Frontière d'origines (liste blanche)
-        run: node scripts/check-origins.mjs src
-      - name: Lint
-        run: npx eslint .
+      - name: Lint + frontière d'origines (src --app ET server --serveur)
+        run: npm run lint
       - name: Typecheck
         run: npx tsc -b
       - name: Tests

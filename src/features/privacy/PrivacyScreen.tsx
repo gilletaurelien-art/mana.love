@@ -15,8 +15,18 @@ export default function PrivacyScreen() {
           Dans cette première version, tout reste sur votre appareil, dans le
           stockage local de votre navigateur (localStorage) : vos conversations
           par personnalité, vos lieux visités et votre registre de points MANA.
-          Aucune donnée n'est envoyée vers un serveur tant qu'aucun backend
-          n'est configuré.
+          Rien de tout cela ne quitte votre appareil.
+        </p>
+        <p className="muted">
+          Deux exceptions, déjà actives aujourd'hui, qui ne sont PAS du
+          stockage à votre nom : si vous demandez des lieux réels autour de
+          vous, vos coordonnées transitent par notre serveur vers
+          OpenStreetMap, et restent en mémoire du serveur jusqu'à 10
+          minutes — pour éviter de répéter la même recherche, jamais pour
+          vous identifier ; et si l'assistant est connecté à un modèle, le
+          texte de vos messages transite par notre serveur vers notre
+          fournisseur de modèle, sans y être écrit. Dans les deux cas,
+          notre serveur relaie — il ne tient pas de dossier sur vous.
         </p>
       </section>
 

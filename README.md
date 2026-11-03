@@ -144,9 +144,13 @@ L'exploration propose deux sources, clairement étiquetées :
   « © OpenStreetMap contributors (ODbL) » affichées.
 
 Le proxy serveur (`server/geo.ts`) impose un User-Agent conforme à la
-politique OSM, met en cache 10 minutes, et valider/normalise les
-résultats. Aucune donnée de localisation n'est stockée : les coordonnées
-restent en mémoire le temps de la requête.
+politique OSM, met en cache 10 minutes (en mémoire serveur, jamais sur
+disque), et valide/normalise les résultats. ⚠️ Les coordonnées ne sont PAS
+stockées côté serveur — mais elles LE SONT côté client, dans
+`localStorage` (`mana.love.explore.coords.v1`, `persistence.ts`), pour
+réafficher le dernier lieu sans redemander la position à chaque visite.
+Elles partent avec le reste des données locales via le bouton de
+suppression de `/confidentialite`.
 
 ## Intégrations en attente
 
