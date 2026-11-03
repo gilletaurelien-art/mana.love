@@ -5,6 +5,7 @@ import { useChatProvider, useChatStatus } from "@/app/ChatProviderContext";
 import { sortedPersonalities, getPersonality } from "@/domain/personalityRegistry";
 import type { ChatMessage, PersonalityConfig } from "@/domain/personalities";
 import type { ProviderReply } from "@/domain/chat";
+import { classifierIntention } from "@/domain/intentRouter";
 import "./chat.css";
 
 type SendState =
@@ -60,6 +61,25 @@ export default function ChatScreen() {
     conversations.append(active.id, userMessage);
     setDraft("");
     setSendState({ phase: "loading" });
+
+    /* 🔴 LE ROUTEUR D'INTENTIONS PASSE AVANT L'APPEL RÉSEAU — jamais à sa
+       place. Il ne fait QUE court-circuiter les tours manifestement
+       triviaux (acquiescement, clôture, salutation) : voir
+       src/domain/intentRouter.ts pour la borne de sécurité qui garantit
+       qu'un message substantiel reste toujours « intime » et part donc
+       vers provider.complete() ci-dessous — là où la détection de
+       détresse s'exécute, comme toujours, avant le modèle. */
+    const intention = classifierIntention(trimmed, new Date().getHours());
+    if (intention.type !== "intime") {
+      conversations.append(active.id, {
+        id: uid(),
+        role: "companion",
+        createdAt: new Date().toISOString(),
+        text: intention.reponseScriptee,
+      });
+      setSendState({ phase: "idle" });
+      return;
+    }
 
     try {
       let reply: ProviderReply;
