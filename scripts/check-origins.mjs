@@ -27,6 +27,7 @@ const ORIGINES_APP = new Set([
   "/api/health",
   "/api/places/nearby",   // proxy serveur → Overpass (OSM)
   "/api/geo/reverse",     // proxy serveur → Nominatim (OSM)
+  "/api/meteo/previsions", // proxy serveur → Open-Meteo
 ]);
 
 /**
@@ -38,6 +39,7 @@ const ORIGINES_SERVEUR = new Set([
   "https://api.mistral.ai",
   "https://overpass-api.de",
   "https://nominatim.openstreetmap.org",
+  "https://api.open-meteo.com",
 ]);
 
 /** CDN souverain du fondateur — avatars .vrm (relevé 28/10/2026). */

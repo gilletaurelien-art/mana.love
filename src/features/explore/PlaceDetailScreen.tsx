@@ -1,14 +1,22 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useExploreData, useVisitedPlaces } from "@/infrastructure/persistence";
+import { fenetreMeteo } from "@/infrastructure/weatherService";
+import { decrireFenetre, type FenetreMeteo } from "@/domain/meteo";
 import { useProgression } from "@/app/ProgressionContext";
 import "./explore.css";
+
+type EtatMeteo =
+  | { statut: "chargement" }
+  | { statut: "indisponible" }
+  | { statut: "ok"; fenetre: FenetreMeteo | null };
 
 export default function PlaceDetailScreen() {
   const { placeId } = useParams<{ placeId: string }>();
   const { places, source, loading, error } = useExploreData();
   const { visited, toggleVisited } = useVisitedPlaces();
   const { reward } = useProgression();
+  const [meteo, setMeteo] = useState<EtatMeteo>({ statut: "chargement" });
 
   const place = places.find((p) => p.id === placeId);
   const isSample = source === "sample";
@@ -18,6 +26,23 @@ export default function PlaceDetailScreen() {
     reward("explore:place-opened", `place-open:${place.id}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [place?.id]);
+
+  useEffect(() => {
+    if (!place?.location) return;
+    let cancelled = false;
+    // "cancelled" évite qu'un résultat tardif (navigation vers un autre
+    // lieu pendant la requête) écrase l'état courant — pas de reset
+    // synchrone en tête d'effet (voir PR routing, même piège React).
+    fenetreMeteo(place.location).then((fenetre) => {
+      if (cancelled) return;
+      setMeteo(
+        fenetre === undefined ? { statut: "indisponible" } : { statut: "ok", fenetre }
+      );
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [place?.location]);
 
   if (loading) {
     return (
@@ -71,6 +96,7 @@ export default function PlaceDetailScreen() {
           {place.location
             ? ` Coordonnées : ${place.location.lat.toFixed(4)}, ${place.location.lng.toFixed(4)}.`
             : ""}
+          {meteo.statut === "ok" ? ` ${decrireFenetre(meteo.fenetre)}` : ""}
         </div>
       )}
 
