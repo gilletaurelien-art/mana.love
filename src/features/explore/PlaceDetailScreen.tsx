@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { useExploreData, useVisitedPlaces } from "@/infrastructure/persistence";
+import {
+  useExploreData,
+  useVisitedPlaces,
+  readLastCoords,
+} from "@/infrastructure/persistence";
+import { osmGeoService } from "@/infrastructure/osmExploreService";
 import { fenetreMeteo } from "@/infrastructure/weatherService";
 import { decrireFenetre, type FenetreMeteo } from "@/domain/meteo";
 import { useProgression } from "@/app/ProgressionContext";
@@ -17,6 +22,7 @@ export default function PlaceDetailScreen() {
   const { visited, toggleVisited } = useVisitedPlaces();
   const { reward } = useProgression();
   const [meteo, setMeteo] = useState<EtatMeteo>({ statut: "chargement" });
+  const [walkMinutes, setWalkMinutes] = useState<number | null>(null);
 
   const place = places.find((p) => p.id === placeId);
   const isSample = source === "sample";
@@ -32,12 +38,25 @@ export default function PlaceDetailScreen() {
     let cancelled = false;
     // "cancelled" évite qu'un résultat tardif (navigation vers un autre
     // lieu pendant la requête) écrase l'état courant — pas de reset
-    // synchrone en tête d'effet (voir PR routing, même piège React).
+    // synchrone en tête d'effet (même piège React dans les deux effets).
     fenetreMeteo(place.location).then((fenetre) => {
       if (cancelled) return;
       setMeteo(
         fenetre === undefined ? { statut: "indisponible" } : { statut: "ok", fenetre }
       );
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [place?.location]);
+
+  useEffect(() => {
+    if (!place?.location) return;
+    const from = readLastCoords();
+    if (!from) return;
+    let cancelled = false;
+    osmGeoService.estimateRouteTime(from, place.location, "walk").then((minutes) => {
+      if (!cancelled) setWalkMinutes(minutes);
     });
     return () => {
       cancelled = true;
@@ -96,6 +115,7 @@ export default function PlaceDetailScreen() {
           {place.location
             ? ` Coordonnées : ${place.location.lat.toFixed(4)}, ${place.location.lng.toFixed(4)}.`
             : ""}
+          {walkMinutes !== null ? ` À environ ${walkMinutes} min à pied d'ici.` : ""}
           {meteo.statut === "ok" ? ` ${decrireFenetre(meteo.fenetre)}` : ""}
         </div>
       )}
