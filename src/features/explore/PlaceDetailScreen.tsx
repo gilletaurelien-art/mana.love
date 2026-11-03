@@ -1,6 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { useExploreData, useVisitedPlaces } from "@/infrastructure/persistence";
+import {
+  useExploreData,
+  useVisitedPlaces,
+  readLastCoords,
+} from "@/infrastructure/persistence";
+import { osmGeoService } from "@/infrastructure/osmExploreService";
 import { useProgression } from "@/app/ProgressionContext";
 import "./explore.css";
 
@@ -9,6 +14,7 @@ export default function PlaceDetailScreen() {
   const { places, source, loading, error } = useExploreData();
   const { visited, toggleVisited } = useVisitedPlaces();
   const { reward } = useProgression();
+  const [walkMinutes, setWalkMinutes] = useState<number | null>(null);
 
   const place = places.find((p) => p.id === placeId);
   const isSample = source === "sample";
@@ -18,6 +24,23 @@ export default function PlaceDetailScreen() {
     reward("explore:place-opened", `place-open:${place.id}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [place?.id]);
+
+  useEffect(() => {
+    if (!place?.location) return;
+    const from = readLastCoords();
+    if (!from) return;
+    let cancelled = false;
+    // Pas de reset synchrone à null ici : le lieu précédent resterait
+    // affiché brièvement pendant la requête, ce qui est préférable à un
+    // flash vide — et "cancelled" empêche un résultat tardif et obsolète
+    // (changement de lieu entre-temps) d'écraser l'état courant.
+    osmGeoService.estimateRouteTime(from, place.location, "walk").then((minutes) => {
+      if (!cancelled) setWalkMinutes(minutes);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [place?.location]);
 
   if (loading) {
     return (
@@ -71,6 +94,7 @@ export default function PlaceDetailScreen() {
           {place.location
             ? ` Coordonnées : ${place.location.lat.toFixed(4)}, ${place.location.lng.toFixed(4)}.`
             : ""}
+          {walkMinutes !== null ? ` À environ ${walkMinutes} min à pied d'ici.` : ""}
         </div>
       )}
 

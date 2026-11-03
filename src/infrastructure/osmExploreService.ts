@@ -19,12 +19,21 @@ export const osmGeoService: GeoService & {
   },
 
   async estimateRouteTime(
-    _from: Coordinates,
-    _to: Coordinates,
-    _mode: "walk" | "bike"
+    from: Coordinates,
+    to: Coordinates,
+    mode: "walk" | "bike"
   ): Promise<number | null> {
-    // Routing (Valhalla/OSRM) : future intégration — pas encore branché.
-    return null;
+    try {
+      const res = await fetch(
+        `/api/geo/route?fromLat=${from.lat}&fromLng=${from.lng}&toLat=${to.lat}&toLng=${to.lng}&mode=${mode}`
+      );
+      if (!res.ok) return null;
+      const data = (await res.json()) as { minutes?: number | null };
+      return typeof data.minutes === "number" ? data.minutes : null;
+    } catch {
+      // Contrat : null = temps inconnu, jamais une erreur qui casse l'écran.
+      return null;
+    }
   },
 
   async nearbyPlaces(coords: Coordinates, radiusM = 3000): Promise<Place[]> {
