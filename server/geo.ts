@@ -11,6 +11,10 @@ import type { Coordinates, Place } from "../src/domain/exploration";
 
 const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
 const NOMINATIM_URL = "https://nominatim.openstreetmap.org/reverse";
+const ROUTING_PROFILE_URL: Record<"walk" | "bike", string> = {
+  walk: "https://routing.openstreetmap.de/routed-foot/route/v1/foot",
+  bike: "https://routing.openstreetmap.de/routed-bike/route/v1/bike",
+};
 const USER_AGENT =
   "MANA.love/0.1 (exploration companion; contact: hello@mana.love)";
 const CACHE_TTL_MS = 10 * 60 * 1000;
@@ -193,6 +197,86 @@ export async function handleReverseGeocode(
     res.end(
       JSON.stringify({
         error: `Échec Nominatim : ${err instanceof Error ? err.message : "erreur inconnue"}`,
+      })
+    );
+  }
+}
+
+/**
+ * Proxy routage réel — Valhalla/OSRM n'est pas auto-hébergé : on passe par
+ * l'instance publique routing.openstreetmap.de (profils foot/bike), de la
+ * même famille que Nominatim (communauté OSM, même politique d'usage :
+ * User-Agent conforme, charge raisonnable, pas de production à grande
+ * échelle). `GeoService.estimateRouteTime` était un contrat dormant
+ * (toujours `null`, voir osmExploreService.ts) ; cette route lui donne un
+ * corps.
+ */
+export async function handleRouteEstimate(
+  _req: IncomingMessage,
+  res: ServerResponse,
+  url: URL
+): Promise<void> {
+  // "Number(null)" vaut 0, pas NaN : un paramètre absent passerait la
+  // validation comme des coordonnées (0, 0) valides. "NaN" par défaut force
+  // Number.isFinite à rejeter une absence comme une valeur invalide.
+  const fromLat = Number(url.searchParams.get("fromLat") ?? "NaN");
+  const fromLng = Number(url.searchParams.get("fromLng") ?? "NaN");
+  const toLat = Number(url.searchParams.get("toLat") ?? "NaN");
+  const toLng = Number(url.searchParams.get("toLng") ?? "NaN");
+  const mode = url.searchParams.get("mode") === "bike" ? "bike" : "walk";
+
+  if (
+    !Number.isFinite(fromLat) ||
+    !Number.isFinite(fromLng) ||
+    !Number.isFinite(toLat) ||
+    !Number.isFinite(toLng)
+  ) {
+    res.writeHead(400, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ error: "Coordonnées de départ et d'arrivée requises." }));
+    return;
+  }
+
+  const cacheKey = `route:${mode}:${fromLat.toFixed(4)}:${fromLng.toFixed(4)}:${toLat.toFixed(4)}:${toLng.toFixed(4)}`;
+  const hit = cached<unknown>(cacheKey);
+  if (hit) {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify(hit));
+    return;
+  }
+
+  try {
+    const base = ROUTING_PROFILE_URL[mode];
+    const osrmRes = await fetch(
+      `${base}/${fromLng},${fromLat};${toLng},${toLat}?overview=false`,
+      { headers: { "User-Agent": USER_AGENT } }
+    );
+    if (!osrmRes.ok) {
+      res.writeHead(502, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: `Routage a répondu ${osrmRes.status}` }));
+      return;
+    }
+    const data = (await osrmRes.json()) as {
+      code?: string;
+      routes?: Array<{ duration?: number; distance?: number }>;
+    };
+    const route = data.code === "Ok" ? data.routes?.[0] : undefined;
+    if (!route || typeof route.duration !== "number") {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ minutes: null, meters: null }));
+      return;
+    }
+    const payload = {
+      minutes: Math.round(route.duration / 60),
+      meters: typeof route.distance === "number" ? Math.round(route.distance) : null,
+    };
+    store(cacheKey, payload);
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify(payload));
+  } catch (err) {
+    res.writeHead(502, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({
+        error: `Échec du routage : ${err instanceof Error ? err.message : "erreur inconnue"}`,
       })
     );
   }

@@ -48,6 +48,15 @@ function write(key: string, value: unknown): void {
   }
 }
 
+/**
+ * Dernière position connue (écrite par useExploreData quand l'utilisateur
+ * accepte la géolocalisation). Lue par les écrans de détail pour estimer
+ * un temps de trajet, sans redemander la position.
+ */
+export function readLastCoords(): Coordinates | null {
+  return read<Coordinates | null>(KEYS.lastCoords, null);
+}
+
 /** ---------------- Registre de progression ---------------- */
 
 export function useLedger() {
