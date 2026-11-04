@@ -50,6 +50,10 @@ export type CleI18n =
   | "home.moments.actionDesc"
   | "home.moments.radio"
   | "home.moments.radioDesc"
+  | "home.moments.ciel"
+  | "home.moments.cielDesc"
+  | "home.moments.themeAstral"
+  | "home.moments.themeAstralDesc"
   | "home.pantheon.titre"
   | "common.confidentialite"
   | "common.nouvelleConversation"
@@ -296,6 +300,10 @@ export const FR: Record<CleI18n, string> = {
   "home.moments.actionDesc": "Un geste pour aujourd'hui",
   "home.moments.radio": "MANAradio",
   "home.moments.radioDesc": "La pluie, le vent, la mer",
+  "home.moments.ciel": "Carte du ciel",
+  "home.moments.cielDesc": "Étoiles, constellations, lune",
+  "home.moments.themeAstral": "Thème astral",
+  "home.moments.themeAstralDesc": "Une lecture symbolique, pas une science",
   "home.pantheon.titre": "Le panthéon s'ouvre à vous",
   "common.confidentialite": "Confidentialité & données",
   "common.nouvelleConversation": "Nouvelle conversation",
@@ -574,6 +582,10 @@ export const EN: Partial<Record<CleI18n, string>> = {
   "home.moments.actionDesc": "One gesture for today",
   "home.moments.radio": "MANAradio",
   "home.moments.radioDesc": "Rain, wind, sea",
+  "home.moments.ciel": "Sky map",
+  "home.moments.cielDesc": "Stars, constellations, moon",
+  "home.moments.themeAstral": "Birth chart",
+  "home.moments.themeAstralDesc": "A symbolic reading, not a science",
   "home.pantheon.titre": "The pantheon opens to you",
   "common.confidentialite": "Privacy & data",
   "common.nouvelleConversation": "New conversation",

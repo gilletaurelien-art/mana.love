@@ -55,6 +55,20 @@ export default function HomeScreen() {
             <span className="muted">{t("home.moments.radioDesc")}</span>
           </span>
         </Link>
+        <Link to="/ciel" className="moment-card surface surface--interact">
+          <span className="moment-card__glyph" aria-hidden="true">★</span>
+          <span>
+            <strong>{t("home.moments.ciel")}</strong>
+            <span className="muted">{t("home.moments.cielDesc")}</span>
+          </span>
+        </Link>
+        <Link to="/theme-astral" className="moment-card surface surface--interact">
+          <span className="moment-card__glyph" aria-hidden="true">☉</span>
+          <span>
+            <strong>{t("home.moments.themeAstral")}</strong>
+            <span className="muted">{t("home.moments.themeAstralDesc")}</span>
+          </span>
+        </Link>
       </section>
 
       <section aria-label="Votre progression" className="home__progress surface surface-pad">
