@@ -311,6 +311,43 @@ demandent une heure de naissance précise ET un lieu, et un système de
 maisons à choisir (Placidus, maisons égales…) — un chantier à part,
 signalé comme tel à l'écran plutôt que deviné.
 
+### Serveur de production — `npm run build && npm run start`
+
+Jusqu'ici, les routes `/api/*` n'existaient que via le plugin Vite de
+développement (`server/index.ts`, `configureServer`) — rien ne les
+servait en production. `server/prod.ts` est un vrai serveur Node
+(`node:http`) qui sert à la fois les fichiers statiques du build
+(`dist/`, avec repli sur `index.html` pour les routes client React
+Router) et les routes `/api/*`.
+
+⭐ **Une seule table de routes, pas deux à maintenir en synchronisation**
+(`server/routes.ts`) : le plugin Vite (dev) et le serveur de production
+l'utilisent tous les deux. Avant cette PR, une route ajoutée à l'un
+pouvait être oubliée dans l'autre sans qu'aucun garde ne le remarque —
+exactement le risque que ce point, resté en attente depuis le début,
+rendait réel à chaque nouvelle route API (#7, #8 l'ont ajoutée deux fois
+à la main). Impossible maintenant : il n'y a qu'un seul endroit où une
+route existe.
+
+```bash
+npm run build   # tsc + build front (dist/) + build serveur (dist-server/)
+npm run start   # node dist-server/prod.js — écoute sur $PORT (3000 par défaut)
+```
+
+🔴 **Vérifié par une vraie traversée de chemin, pas une simulation** :
+`fetch()` normalise lui-même les segments `..` d'une URL avant l'envoi
+(comme un navigateur) — mesuré directement en envoyant la requête à la
+main en TCP brut (`node:net`), seul moyen de faire parvenir au serveur
+une tentative de traversée telle quelle. Avec un fichier réel placé hors
+de `dist/` comme cible, confirmé que le serveur ne le sert jamais (repli
+SPA), et vérifié par mutation (le garde anti-traversée retiré, confirmé
+qu'un test dédié — appelant la fonction de résolution directement,
+pas via HTTP — passe au rouge, puis restauré).
+
+⚠️ Les variables d'environnement viennent de `process.env` en
+production (injectées par l'hébergeur), jamais d'un fichier `.env.local`
+lu sur disque comme en développement.
+
 ## Intégrations en attente
 
 1. **Audio (voix, paysages sonores)** — `src/domain/audio.ts` définit
@@ -320,10 +357,7 @@ signalé comme tel à l'écran plutôt que deviné.
    cache client ; le serveur devra valider les récompenses
    (idempotence, plafonds, déblocages atomiques) et servir de source de
    vérité.
-3. **Serveur de production** — les routes `/api/*` sont servies par le
-   plugin Vite en développement ; en production, il faut un runtime Node
-   équivalent qui réutilise `server/chat.ts` et `server/geo.ts`.
-5. **Mémoire déclarée et comptes** — `src/domain/memoire.ts` porte le
+3. **Mémoire déclarée et comptes** — `src/domain/memoire.ts` porte le
    contrat (genres, durées de péremption, calcul d'expiration), testé et
    vérifié indépendamment de toute base. `supabase/migrations/0001_memoire_declaree.sql`
    porte le schéma et les règles d'accès ligne par ligne — **vérifiées par

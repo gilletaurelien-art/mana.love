@@ -1,44 +1,27 @@
 import type { Plugin } from "vite";
 import fs from "node:fs";
 import path from "node:path";
-import { handleChat } from "./chat";
-import { handleNearbyPlaces, handleReverseGeocode, handleRouteEstimate } from "./geo";
-import { handleWeatherForecast } from "./weather";
+import { creerRepartiteurApi } from "./routes";
 
 /**
- * Plugin Vite : expose les routes API côté serveur de développement.
- * En production, ces routes devront être servies par un runtime Node
- * équivalent (voir README) — le navigateur n'appelle que /api/*.
+ * Plugin Vite : expose les routes API côté serveur de développement, via
+ * la même table que `server/prod.ts` (voir `routes.ts`) — pas une copie.
  */
 export function manaApiPlugin(): Plugin {
   const env = loadEnv();
+  const repartir = creerRepartiteurApi(env);
 
   return {
     name: "mana-api",
     configureServer(server) {
-      server.middlewares.use(
-        "/api/chat",
-        (req, res) => void handleChat(req, res, env)
-      );
-      server.middlewares.use("/api/places/nearby", (req, res) => {
-        const url = new URL(req.url ?? "/", "http://localhost");
-        void handleNearbyPlaces(req, res, url);
-      });
-      server.middlewares.use("/api/geo/reverse", (req, res) => {
-        const url = new URL(req.url ?? "/", "http://localhost");
-        void handleReverseGeocode(req, res, url);
-      });
-      server.middlewares.use("/api/meteo/previsions", (req, res) => {
-        const url = new URL(req.url ?? "/", "http://localhost");
-        void handleWeatherForecast(req, res, url);
-      });
-      server.middlewares.use("/api/geo/route", (req, res) => {
-        const url = new URL(req.url ?? "/", "http://localhost");
-        void handleRouteEstimate(req, res, url);
-      });
-      server.middlewares.use("/api/health", (_req, res) => {
-        res.writeHead(200, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ aiConfigured: Boolean(env.MISTRAL_API_KEY) }));
+      server.middlewares.use((req, res, next) => {
+        if (!req.url?.startsWith("/api/")) {
+          next();
+          return;
+        }
+        void repartir(req, res).then((trouve) => {
+          if (!trouve) next();
+        });
       });
     },
   };
