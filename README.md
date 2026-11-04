@@ -402,7 +402,21 @@ site. Vérifié visuellement (capture d'écran de l'accueil) : les deux
 nouvelles cartes s'affichent avec leur icône, leur titre et leur
 description.
 
-## Intégrations en attente
+### Navigation mobile — `/compte` manquait, invisible sans taper l'URL
+
+Audit de la navigation (« tout est-il à 1 clic ? ») : sur desktop,
+`TopBar` liste les 8 routes. Sur mobile, `MobileNav` (la barre du bas,
+ce que la majorité du trafic utilise) n'en listait que 5 — `/compte`
+n'y figurait pas, et n'était lié nulle part ailleurs sur mobile (ni
+`Footer`, ni l'accueil) : la porte d'entrée du compte était invisible
+sans taper l'URL à la main.
+
+- `/compte` ajouté comme 6ᵉ item de `MobileNav`.
+- 🔴 **6 items à 58px min. chacun dépassent 320px** (iPhone SE et
+  équivalents) — repéré par capture d'écran à cette largeur, pas
+  supposé : le dernier item (« Compte ») sortait du cadre. Un
+  `@media (max-width: 360px)` resserre le padding et la taille des
+  items sous ce seuil ; revérifié par capture, plus aucun débordement.
 
 1. **Audio (voix, paysages sonores)** — `src/domain/audio.ts` définit
    `AudioCatalog` / `AudioPlayer` ; le catalogue radio reste vide tant que
