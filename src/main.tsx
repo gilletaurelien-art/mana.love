@@ -18,6 +18,7 @@ import ActionScreen from "@/features/modes/ActionScreen";
 import RadioScreen from "@/features/modes/RadioScreen";
 import PrivacyScreen from "@/features/privacy/PrivacyScreen";
 import AccountScreen from "@/features/account/AccountScreen";
+import CielScreen from "@/features/astronomie/CielScreen";
 import "@/styles/tokens.css";
 import "@/styles/components.css";
 import "@/components/nav.css";
@@ -44,6 +45,7 @@ createRoot(document.getElementById("root")!).render(
               <Route path="/action" element={<ActionScreen />} />
               <Route path="/ecouter" element={<RadioScreen />} />
               <Route path="/compte" element={<AccountScreen />} />
+              <Route path="/ciel" element={<CielScreen />} />
               <Route path="/confidentialite" element={<PrivacyScreen />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

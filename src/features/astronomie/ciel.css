@@ -1,0 +1,42 @@
+.ciel__dome-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0;
+}
+
+.ciel__dome {
+  width: min(100%, 480px);
+  height: auto;
+  background: radial-gradient(circle, var(--c-nuit-900) 0%, var(--c-nuit-950) 100%);
+  border-radius: 50%;
+}
+
+.ciel__horizon {
+  fill: none;
+  stroke: var(--c-ivoire-mi);
+  stroke-width: 1;
+  opacity: 0.5;
+}
+
+.ciel__point-cardinal {
+  fill: var(--c-ivoire-mi);
+  font-size: 11px;
+  text-anchor: middle;
+  opacity: 0.7;
+}
+
+.ciel__constellation polyline {
+  fill: none;
+  stroke: var(--c-vague-400);
+  stroke-width: 0.6;
+  opacity: 0.45;
+}
+
+.ciel__etoile {
+  fill: var(--c-ivoire);
+}
+
+.ciel__attribution {
+  text-align: center;
+  font-size: 0.75rem;
+}
