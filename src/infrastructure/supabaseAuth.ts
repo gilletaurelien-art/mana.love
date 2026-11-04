@@ -1,4 +1,4 @@
-import { createClient, type SupabaseClient, type Session } from "@supabase/supabase-js";
+import type { SupabaseClient, Session } from "@supabase/supabase-js";
 
 /**
  * Authentification par lien magique — Supabase Auth, côté navigateur.
@@ -15,6 +15,12 @@ import { createClient, type SupabaseClient, type Session } from "@supabase/supab
  * `MISTRAL_API_KEY` ne l'est pas) : la sécurité tient aux policies RLS
  * côté base (voir `supabase/migrations/0001_memoire_declaree.sql`), pas
  * au secret de cette clé.
+ *
+ * ⭐ `@supabase/supabase-js` (~220 Ko) n'est importé qu'EN DYNAMIQUE, dans
+ * `obtenirClient()` — un `import` statique en haut de fichier serait
+ * inclus dans le chunk principal par Vite, téléchargé par tout le monde,
+ * même qui ne configure jamais de compte (`compteConfigure() === false`,
+ * le cas réel aujourd'hui) et ne visite jamais `/compte`.
  */
 
 const URL = import.meta.env.VITE_SUPABASE_URL;
@@ -27,9 +33,12 @@ export function compteConfigure(): boolean {
 
 let client: SupabaseClient | null = null;
 
-function obtenirClient(): SupabaseClient | null {
+async function obtenirClient(): Promise<SupabaseClient | null> {
   if (!compteConfigure()) return null;
-  if (!client) client = createClient(URL!, ANON_KEY!);
+  if (!client) {
+    const { createClient } = await import("@supabase/supabase-js");
+    client = createClient(URL!, ANON_KEY!);
+  }
   return client;
 }
 
@@ -39,7 +48,7 @@ export interface ResultatEnvoi {
 }
 
 export async function envoyerLienMagique(email: string): Promise<ResultatEnvoi> {
-  const c = obtenirClient();
+  const c = await obtenirClient();
   if (!c) return { ok: false, erreur: "Compte non configuré." };
   const { error } = await c.auth.signInWithOtp({
     email,
@@ -50,22 +59,34 @@ export async function envoyerLienMagique(email: string): Promise<ResultatEnvoi> 
 }
 
 export async function obtenirSession(): Promise<Session | null> {
-  const c = obtenirClient();
+  const c = await obtenirClient();
   if (!c) return null;
   const { data } = await c.auth.getSession();
   return data.session;
 }
 
-/** S'abonne aux changements de session. Rend la fonction de désabonnement. */
+/**
+ * S'abonne aux changements de session. Rend la fonction de désabonnement
+ * — synchrone en apparence, mais `obtenirClient()` est asynchrone (import
+ * dynamique) : l'abonnement réel se fait dès que le client est prêt, et
+ * le désabonnement fonctionne même appelé avant (il attend la promesse).
+ */
 export function ecouterSession(cb: (session: Session | null) => void): () => void {
-  const c = obtenirClient();
-  if (!c) return () => {};
-  const { data } = c.auth.onAuthStateChange((_event, session) => cb(session));
-  return () => data.subscription.unsubscribe();
+  let desabonner: (() => void) | null = null;
+  let annule = false;
+  void obtenirClient().then((c) => {
+    if (!c || annule) return;
+    const { data } = c.auth.onAuthStateChange((_event, session) => cb(session));
+    desabonner = () => data.subscription.unsubscribe();
+  });
+  return () => {
+    annule = true;
+    desabonner?.();
+  };
 }
 
 export async function seDeconnecter(): Promise<void> {
-  const c = obtenirClient();
+  const c = await obtenirClient();
   if (!c) return;
   await c.auth.signOut();
 }
