@@ -1,0 +1,55 @@
+.theme-astral__form input[type="date"],
+.theme-astral__form input[type="time"] {
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--c-ivoire-mi);
+  background: var(--c-nuit-800);
+  color: var(--c-ink-high);
+  margin-top: 0.25rem;
+}
+
+.theme-astral__form label {
+  display: block;
+  font-size: 0.85rem;
+}
+
+.theme-astral__case {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.theme-astral__liste {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.theme-astral__ligne {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.theme-astral__glyphe {
+  font-size: 1.3rem;
+  width: 1.6rem;
+  text-align: center;
+}
+
+.theme-astral__nom {
+  min-width: 6rem;
+  font-weight: 600;
+}
+
+.theme-astral__signe {
+  flex: 1;
+}
+
+.theme-astral__note {
+  font-size: 0.8rem;
+}

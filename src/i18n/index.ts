@@ -233,7 +233,40 @@ export type CleI18n =
   | "lune.pleine"
   | "lune.gibbeuse-decroissante"
   | "lune.dernier-quartier"
-  | "lune.dernier-croissant";
+  | "lune.dernier-croissant"
+  // thème astral
+  | "nav.themeAstral"
+  | "themeAstral.eyebrow"
+  | "themeAstral.titre"
+  | "themeAstral.lead"
+  | "themeAstral.cadreTitre"
+  | "themeAstral.cadreTexte"
+  | "themeAstral.dateLabel"
+  | "themeAstral.heureLabel"
+  | "themeAstral.heureInconnue"
+  | "themeAstral.calculer"
+  | "themeAstral.resultatTitre"
+  | "themeAstral.degre"
+  | "themeAstral.ascendantNote"
+  | "corps.soleil"
+  | "corps.lune"
+  | "corps.mercure"
+  | "corps.venus"
+  | "corps.mars"
+  | "corps.jupiter"
+  | "corps.saturne"
+  | "signe.belier"
+  | "signe.taureau"
+  | "signe.gemeaux"
+  | "signe.cancer"
+  | "signe.lion"
+  | "signe.vierge"
+  | "signe.balance"
+  | "signe.scorpion"
+  | "signe.sagittaire"
+  | "signe.capricorne"
+  | "signe.verseau"
+  | "signe.poissons";
 
 /** Dictionnaire français complet — référence pour toutes les langues. */
 export const FR: Record<CleI18n, string> = {
@@ -477,6 +510,41 @@ export const FR: Record<CleI18n, string> = {
   "lune.gibbeuse-decroissante": "Gibbeuse décroissante",
   "lune.dernier-quartier": "Dernier quartier",
   "lune.dernier-croissant": "Dernier croissant",
+
+  "nav.themeAstral": "Thème astral",
+  "themeAstral.eyebrow": "Astrologie",
+  "themeAstral.titre": "Le thème astral",
+  "themeAstral.lead": "Les positions réelles du Soleil, de la Lune et des planètes, à la date de votre choix.",
+  "themeAstral.cadreTitre": "Lecture symbolique, pas une science.",
+  "themeAstral.cadreTexte":
+    "Les positions affichées sont calculées (vraie astronomie, comme la carte du ciel) ; le sens attribué aux signes est une tradition, pas un fait vérifiable. MANA ne prédit rien — elle est une IA, jamais un être surnaturel.",
+  "themeAstral.dateLabel": "Date de naissance",
+  "themeAstral.heureLabel": "Heure (UTC)",
+  "themeAstral.heureInconnue": "Heure inconnue (midi UTC par défaut — la Lune peut varier d'un signe)",
+  "themeAstral.calculer": "Calculer",
+  "themeAstral.resultatTitre": "Positions",
+  "themeAstral.degre": "{n}°",
+  "themeAstral.ascendantNote":
+    "Sans ascendant ni maisons : ils demandent une heure de naissance précise et un lieu — à venir.",
+  "corps.soleil": "Soleil",
+  "corps.lune": "Lune",
+  "corps.mercure": "Mercure",
+  "corps.venus": "Vénus",
+  "corps.mars": "Mars",
+  "corps.jupiter": "Jupiter",
+  "corps.saturne": "Saturne",
+  "signe.belier": "Bélier",
+  "signe.taureau": "Taureau",
+  "signe.gemeaux": "Gémeaux",
+  "signe.cancer": "Cancer",
+  "signe.lion": "Lion",
+  "signe.vierge": "Vierge",
+  "signe.balance": "Balance",
+  "signe.scorpion": "Scorpion",
+  "signe.sagittaire": "Sagittaire",
+  "signe.capricorne": "Capricorne",
+  "signe.verseau": "Verseau",
+  "signe.poissons": "Poissons",
 };
 
 export const EN: Partial<Record<CleI18n, string>> = {
@@ -717,6 +785,41 @@ export const EN: Partial<Record<CleI18n, string>> = {
   "lune.gibbeuse-decroissante": "Waning gibbous",
   "lune.dernier-quartier": "Last quarter",
   "lune.dernier-croissant": "Waning crescent",
+
+  "nav.themeAstral": "Birth chart",
+  "themeAstral.eyebrow": "Astrology",
+  "themeAstral.titre": "The birth chart",
+  "themeAstral.lead": "The real positions of the Sun, Moon and planets, on the date you choose.",
+  "themeAstral.cadreTitre": "A symbolic reading, not a science.",
+  "themeAstral.cadreTexte":
+    "The positions shown are calculated (real astronomy, like the sky map) ; the meaning given to signs is a tradition, not a verifiable fact. MANA predicts nothing — she's an AI, never a supernatural being.",
+  "themeAstral.dateLabel": "Birth date",
+  "themeAstral.heureLabel": "Time (UTC)",
+  "themeAstral.heureInconnue": "Unknown time (defaults to noon UTC — the Moon's sign can vary)",
+  "themeAstral.calculer": "Calculate",
+  "themeAstral.resultatTitre": "Positions",
+  "themeAstral.degre": "{n}°",
+  "themeAstral.ascendantNote":
+    "No ascendant or houses: those need a precise birth time and place — coming later.",
+  "corps.soleil": "Sun",
+  "corps.lune": "Moon",
+  "corps.mercure": "Mercury",
+  "corps.venus": "Venus",
+  "corps.mars": "Mars",
+  "corps.jupiter": "Jupiter",
+  "corps.saturne": "Saturn",
+  "signe.belier": "Aries",
+  "signe.taureau": "Taurus",
+  "signe.gemeaux": "Gemini",
+  "signe.cancer": "Cancer",
+  "signe.lion": "Leo",
+  "signe.vierge": "Virgo",
+  "signe.balance": "Libra",
+  "signe.scorpion": "Scorpio",
+  "signe.sagittaire": "Sagittarius",
+  "signe.capricorne": "Capricorn",
+  "signe.verseau": "Aquarius",
+  "signe.poissons": "Pisces",
 };
 
 const DICTIONNAIRES: Record<Langue, Partial<Record<CleI18n, string>>> = {
