@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { traduire, LANGUES } from "../index";
+import { traduire, LANGUES, FR, EN } from "../index";
 
 describe("i18n — fondation internationale", () => {
   it("traduit en français par défaut", () => {
@@ -26,5 +26,10 @@ describe("i18n — fondation internationale", () => {
 
   it("les langues disponibles sont fr et en", () => {
     expect(LANGUES.map((l) => l.code)).toEqual(["fr", "en"]);
+  });
+
+  it("🔴 chaque clé FR a une traduction EN — un trou ne se verrait jamais sans ce test", () => {
+    const manquantes = Object.keys(FR).filter((cle) => !(cle in EN));
+    expect(manquantes).toEqual([]);
   });
 });

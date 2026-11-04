@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useExploreData } from "@/infrastructure/persistence";
 import type { Place, Experience } from "@/domain/exploration";
+import { useI18n } from "@/app/LanguageContext";
 import "./explore.css";
 
 export default function ExploreScreen() {
@@ -15,12 +16,13 @@ export default function ExploreScreen() {
     useRealLocation,
   } = useExploreData();
   const [query, setQuery] = useState("");
+  const { t } = useI18n();
 
   if (loading) {
     return (
       <div className="page-header">
-        <h1>Explorer le monde</h1>
-        <div className="stack stack-3" aria-busy="true" aria-label="Chargement des découvertes">
+        <h1>{t("explore.titre")}</h1>
+        <div className="stack stack-3" aria-busy="true" aria-label={t("explore.chargementAria")}>
           <div className="skeleton-line" style={{ width: "80%" }} />
           <div className="skeleton-line" style={{ width: "60%" }} />
           <div className="skeleton-line" style={{ width: "70%" }} />
@@ -45,30 +47,27 @@ export default function ExploreScreen() {
   return (
     <div className="explore">
       <div className="page-header">
-        <p className="eyebrow">Exploration</p>
-        <h1>Explorer le monde</h1>
-        <p className="lead">
-          Des lieux et des expériences à vivre dehors, près de vous.
-        </p>
+        <p className="eyebrow">{t("explore.eyebrow")}</p>
+        <h1>{t("explore.titre")}</h1>
+        <p className="lead">{t("explore.lead")}</p>
       </div>
 
       {isOsm ? (
         <div className="notice notice--info" role="status">
-          <strong>Lieux réels autour de vous</strong>
-          {locality ? ` — proche de ${locality}.` : "."} Données ©
-          OpenStreetMap contributors (ODbL).
+          <strong>{t("explore.lieuxReelsTitre")}</strong>
+          {" "}
+          {locality ? t("explore.procheDe", { lieu: locality }) : ""} {t("explore.odbl")}
         </div>
       ) : (
         <div className="demo-banner" role="note">
           <span aria-hidden="true">✦</span>
           <div className="stack stack-3">
             <p>
-              <strong>Exemples de démonstration.</strong> Activez les lieux
-              réels autour de vous, ou parcourez d'abord les exemples.
+              <strong>{t("explore.demoTitre")}</strong> {t("explore.demoTexte")}
             </p>
             <p>
               <button className="btn btn-secondary btn-sm" onClick={useRealLocation}>
-                Découvrir des lieux réels autour de moi (OpenStreetMap)
+                {t("explore.decouvrirReels")}
               </button>
             </p>
           </div>
@@ -83,13 +82,13 @@ export default function ExploreScreen() {
 
       <div className="explore__search">
         <label htmlFor="explore-search" className="field-label">
-          Rechercher un lieu, une ambiance, une expérience
+          {t("explore.rechercherLabel")}
         </label>
         <input
           id="explore-search"
           type="search"
           className="text-input"
-          placeholder="ex. : aube, marche, jardin…"
+          placeholder={t("explore.recherchePlaceholder")}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
@@ -97,13 +96,11 @@ export default function ExploreScreen() {
 
       <section aria-labelledby="places-heading">
         <h2 id="places-heading" className="explore__section-title">
-          Lieux à découvrir {isOsm && <span className="tag">OpenStreetMap</span>}
+          {t("explore.lieuxTitre")} {isOsm && <span className="tag">OpenStreetMap</span>}
         </h2>
         {filteredPlaces.length === 0 ? (
           <p className="notice">
-            {isOsm
-              ? "Explorez une autre zone pour découvrir d'autres lieux."
-              : "Essayez un autre mot."}
+            {isOsm ? t("explore.aucunLieuOsm") : t("explore.aucunResultat")}
           </p>
         ) : (
           <ul className="explore__grid">
@@ -117,9 +114,9 @@ export default function ExploreScreen() {
       </section>
 
       <section aria-labelledby="exp-heading">
-        <h2 id="exp-heading" className="explore__section-title">Expériences à vivre</h2>
+        <h2 id="exp-heading" className="explore__section-title">{t("explore.experiencesTitre")}</h2>
         {filteredExperiences.length === 0 ? (
-          <p className="notice">Essayez un autre mot.</p>
+          <p className="notice">{t("explore.aucunResultat")}</p>
         ) : (
           <ul className="explore__grid">
             {filteredExperiences.map((e) => (

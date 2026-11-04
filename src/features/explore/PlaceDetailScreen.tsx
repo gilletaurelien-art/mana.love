@@ -9,6 +9,7 @@ import { osmGeoService } from "@/infrastructure/osmExploreService";
 import { fenetreMeteo } from "@/infrastructure/weatherService";
 import { decrireFenetre, type FenetreMeteo } from "@/domain/meteo";
 import { useProgression } from "@/app/ProgressionContext";
+import { useI18n } from "@/app/LanguageContext";
 import "./explore.css";
 
 type EtatMeteo =
@@ -21,6 +22,7 @@ export default function PlaceDetailScreen() {
   const { places, source, loading, error } = useExploreData();
   const { visited, toggleVisited } = useVisitedPlaces();
   const { reward } = useProgression();
+  const { t } = useI18n();
   const [meteo, setMeteo] = useState<EtatMeteo>({ statut: "chargement" });
   const [walkMinutes, setWalkMinutes] = useState<number | null>(null);
 
@@ -75,12 +77,12 @@ export default function PlaceDetailScreen() {
   if (!place) {
     return (
       <div className="stack stack-4">
-        <h1>Lieu introuvable</h1>
+        <h1>{t("exploreDetail.lieuIntrouvableTitre")}</h1>
         <p className="muted">
-          {error ?? "Ce lieu n'existe pas ou n'est plus disponible."}
+          {error ?? t("exploreDetail.lieuIntrouvableTexte")}
         </p>
         <Link to="/explorer" className="btn btn-secondary">
-          ← Retour à l'exploration
+          {t("exploreDetail.retourExplorationLien")}
         </Link>
       </div>
     );
@@ -90,9 +92,9 @@ export default function PlaceDetailScreen() {
 
   return (
     <article className="explore-detail">
-      <nav aria-label="Fil d'exploration">
+      <nav aria-label={t("exploreDetail.filAria")}>
         <Link to="/explorer" className="quiet explore-detail__back">
-          ← Explorer
+          {t("exploreDetail.retourExplorer")}
         </Link>
       </nav>
       <header className="explore-detail__header">
@@ -104,18 +106,20 @@ export default function PlaceDetailScreen() {
         <div className="demo-banner" role="note">
           <span aria-hidden="true">✦</span>
           <p>
-            <strong>Fiche de démonstration.</strong> Aucune information réelle
-            (adresse, horaires, accès) n'est affichée.
+            <strong>{t("exploreDetail.demoTitre")}</strong> {t("exploreDetail.demoTexte")}
           </p>
         </div>
       ) : (
         <div className="notice notice--info" role="status">
-          <strong>Lieu réel</strong> — données © OpenStreetMap contributors
-          (ODbL).
+          <strong>{t("exploreDetail.lieuReelTitre")}</strong>
+          {t("exploreDetail.odblSuffixe")}
           {place.location
-            ? ` Coordonnées : ${place.location.lat.toFixed(4)}, ${place.location.lng.toFixed(4)}.`
+            ? t("exploreDetail.coordonnees", {
+                lat: place.location.lat.toFixed(4),
+                lng: place.location.lng.toFixed(4),
+              })
             : ""}
-          {walkMinutes !== null ? ` À environ ${walkMinutes} min à pied d'ici.` : ""}
+          {walkMinutes !== null ? t("exploreDetail.minutesAPied", { n: walkMinutes }) : ""}
           {meteo.statut === "ok" ? ` ${decrireFenetre(meteo.fenetre)}` : ""}
         </div>
       )}
@@ -124,8 +128,8 @@ export default function PlaceDetailScreen() {
       <p className="muted">{place.description}</p>
 
       {place.bestMoments.length > 0 && (
-        <section aria-label="Moments recommandés" className="explore-detail__section">
-          <h2>Bons moments</h2>
+        <section aria-label={t("exploreDetail.bonsMomentsAria")} className="explore-detail__section">
+          <h2>{t("exploreDetail.bonsMomentsTitre")}</h2>
           <ul className="cluster">
             {place.bestMoments.map((m) => (
               <li key={m} className="tag">{m}</li>
@@ -134,12 +138,10 @@ export default function PlaceDetailScreen() {
         </section>
       )}
 
-      <section aria-label="Actions" className="explore-detail__section">
-        <h2>Ce lieu vous a plu ?</h2>
+      <section aria-label={t("exploreDetail.actionsAria")} className="explore-detail__section">
+        <h2>{t("exploreDetail.plu")}</h2>
         <p className="muted">
-          {isVisited
-            ? "Une belle découverte, gardée dans votre carnet."
-            : "Notez-le dans votre carnet de découvertes."}
+          {isVisited ? t("exploreDetail.dejaDecouvert") : t("exploreDetail.pasEncoreDecouvert")}
         </p>
         <div className="cluster">
           <button
@@ -151,10 +153,10 @@ export default function PlaceDetailScreen() {
               toggleVisited(place.id);
             }}
           >
-            {isVisited ? "Découvert ✓" : "Je l'ai découvert"}
+            {isVisited ? t("exploreDetail.decouvert") : t("exploreDetail.jeLaiDecouvert")}
           </button>
           <Link to="/parler" className="btn btn-secondary">
-            En parler avec MANA
+            {t("exploreDetail.enParlerAvecMana")}
           </Link>
         </div>
       </section>

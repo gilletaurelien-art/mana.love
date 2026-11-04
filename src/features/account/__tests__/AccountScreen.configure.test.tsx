@@ -27,12 +27,15 @@ beforeEach(() => {
 
 async function renderCompte() {
   const { AuthProvider } = await import("@/app/AuthContext");
+  const { LanguageProvider } = await import("@/app/LanguageContext");
   const AccountScreen = (await import("../AccountScreen")).default;
   render(
     <MemoryRouter>
-      <AuthProvider>
-        <AccountScreen />
-      </AuthProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <AccountScreen />
+        </AuthProvider>
+      </LanguageProvider>
     </MemoryRouter>
   );
 }

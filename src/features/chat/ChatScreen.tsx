@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useProgression } from "@/app/ProgressionContext";
 import { useChatProvider, useChatStatus } from "@/app/ChatProviderContext";
+import { useI18n } from "@/app/LanguageContext";
 import { sortedPersonalities, getPersonality } from "@/domain/personalityRegistry";
 import type { ChatMessage, PersonalityConfig } from "@/domain/personalities";
 import type { ProviderReply } from "@/domain/chat";
@@ -26,6 +27,7 @@ export default function ChatScreen() {
   const provider = useChatProvider();
   const { checked } = useChatStatus();
   const [params, setParams] = useSearchParams();
+  const { t } = useI18n();
 
   const requestedId = params.get("avec");
   const all = sortedPersonalities();
@@ -112,9 +114,9 @@ export default function ChatScreen() {
 
   return (
     <div className="chat">
-      <div className="chat__sidebar" aria-label="Choisir une personnalité">
-        <p className="eyebrow">Personnalité active</p>
-        <div role="radiogroup" aria-label="Personnalités débloquées" className="chat__personas">
+      <div className="chat__sidebar" aria-label={t("chat.choisirPersonnalite")}>
+        <p className="eyebrow">{t("chat.personnaliteActive")}</p>
+        <div role="radiogroup" aria-label={t("chat.personnalitesDebloquees")} className="chat__personas">
           {unlockedPersonalities.map((p) => (
             <button
               key={p.id}
@@ -138,22 +140,22 @@ export default function ChatScreen() {
                 <span>
                   <strong>{p.name}</strong>
                   <span className="quiet">
-                    🔒 {p.unlock.kind === "mana-points" ? `${p.unlock.threshold} points` : ""}
+                    🔒 {p.unlock.kind === "mana-points" ? t("chat.pointsVerrou", { n: p.unlock.threshold }) : ""}
                   </span>
                 </span>
               </div>
             ))}
         </div>
         {!checked ? (
-          <p className="tag">Connexion…</p>
+          <p className="tag">{t("chat.connexion")}</p>
         ) : provider.isLive ? (
-          <p className="tag">MANA · en ligne</p>
+          <p className="tag">{t("chat.enLigne")}</p>
         ) : (
-          <p className="tag">Mode démo</p>
+          <p className="tag">{t("chat.modeDemo")}</p>
         )}
       </div>
 
-      <section className="chat__main surface" aria-label={`Conversation avec ${active.name}`}>
+      <section className="chat__main surface" aria-label={t("chat.conversationAvec", { nom: active.name })}>
         <header className="chat__header">
           <div>
             <h2>{active.name}</h2>
@@ -164,15 +166,15 @@ export default function ChatScreen() {
               className="btn btn-ghost btn-sm"
               onClick={() => conversations.clear(active.id)}
             >
-              Nouvelle conversation
+              {t("common.nouvelleConversation")}
             </button>
           )}
         </header>
 
         {checked && !provider.isLive && (
           <div className="chat__demo-notice">
-            <strong>Mode démo.</strong> Les réponses viennent d'un script
-            local. Ajoutez MISTRAL_API_KEY pour la vraie voix de {active.name}.
+            <strong>{t("chat.demoNoticeTitre")}</strong>{" "}
+            {t("chat.demoNoticeTexte", { nom: active.name })}
           </div>
         )}
 
@@ -181,10 +183,7 @@ export default function ChatScreen() {
             <div className="chat__welcome">
               <span className={`persona-orb persona-orb--lg persona-orb--${active.theme}`} aria-hidden="true" />
               <h3>{active.greeting}</h3>
-              <p className="muted">
-                Écrivez ce qui vous traverse — {active.name} est là pour vous
-                écouter.
-              </p>
+              <p className="muted">{t("chat.bienvenueTexte", { nom: active.name })}</p>
             </div>
           ) : (
             <ol className="chat__messages">
@@ -194,7 +193,7 @@ export default function ChatScreen() {
                   className={`chat__msg chat__msg--${m.role === "user" ? "user" : "companion"}`}
                 >
                   <span className="visually-hidden">
-                    {m.role === "user" ? "Vous : " : `${active.name} : `}
+                    {m.role === "user" ? t("chat.vousLabel") : t("chat.locuteurLabel", { nom: active.name })}
                   </span>
                   {m.text}
                 </li>
@@ -212,7 +211,7 @@ export default function ChatScreen() {
           <p className="notice notice--error" role="alert">
             {sendState.message}{" "}
             <button className="btn btn-ghost btn-sm" onClick={() => setSendState({ phase: "idle" })}>
-              Réessayer
+              {t("chat.reessayer")}
             </button>
           </p>
         )}
@@ -225,12 +224,12 @@ export default function ChatScreen() {
           }}
         >
           <label htmlFor="chat-input" className="visually-hidden">
-            Votre message à {active.name}
+            {t("chat.messageA", { nom: active.name })}
           </label>
           <textarea
             id="chat-input"
             className="text-input chat__input"
-            placeholder={`Écrire à ${active.name}…`}
+            placeholder={t("chat.ecrireA", { nom: active.name })}
             value={draft}
             rows={2}
             onChange={(e) => setDraft(e.target.value)}
@@ -247,7 +246,7 @@ export default function ChatScreen() {
             className="btn btn-primary"
             disabled={sendState.phase === "loading" || draft.trim().length === 0}
           >
-            Envoyer
+            {t("common.envoyer")}
           </button>
         </form>
       </section>
