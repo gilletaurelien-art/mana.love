@@ -2,7 +2,8 @@ import type { Plugin } from "vite";
 import fs from "node:fs";
 import path from "node:path";
 import { handleChat } from "./chat";
-import { handleNearbyPlaces, handleReverseGeocode } from "./geo";
+import { handleNearbyPlaces, handleReverseGeocode, handleRouteEstimate } from "./geo";
+import { handleWeatherForecast } from "./weather";
 
 /**
  * Plugin Vite : expose les routes API côté serveur de développement.
@@ -26,6 +27,14 @@ export function manaApiPlugin(): Plugin {
       server.middlewares.use("/api/geo/reverse", (req, res) => {
         const url = new URL(req.url ?? "/", "http://localhost");
         void handleReverseGeocode(req, res, url);
+      });
+      server.middlewares.use("/api/meteo/previsions", (req, res) => {
+        const url = new URL(req.url ?? "/", "http://localhost");
+        void handleWeatherForecast(req, res, url);
+      });
+      server.middlewares.use("/api/geo/route", (req, res) => {
+        const url = new URL(req.url ?? "/", "http://localhost");
+        void handleRouteEstimate(req, res, url);
       });
       server.middlewares.use("/api/health", (_req, res) => {
         res.writeHead(200, { "Content-Type": "application/json" });

@@ -3,6 +3,7 @@ import { buildSystemPrompt } from "../src/domain/systemPrompt";
 import { getPersonality } from "../src/domain/personalityRegistry";
 import { souvenirsOperants } from "../src/domain/memoire";
 import type { SouvenirDeclare } from "../src/domain/memoire";
+import { detecterDetresse } from "../src/domain/detresse";
 import type { ChatMessage } from "../src/domain/personalities";
 
 /**
@@ -19,6 +20,11 @@ import type { ChatMessage } from "../src/domain/personalities";
  * ni base provisionnée ni écran pour produire des souvenirs. Cette route
  * est prête pour le jour où ils arriveront, et testée comme telle — mais
  * elle ne promet rien aujourd'hui que l'application sache tenir.
+ *
+ * 🔴 LA DÉTECTION DE DÉTRESSE PASSE AVANT TOUT — avant même la vérification
+ * de la clé Mistral. Un message de crise obtient une réponse scriptée et
+ * vérifiée même si l'IA n'est pas configurée ; ce n'est jamais le modèle qui
+ * décide quoi répondre à une détresse. Voir src/domain/detresse.ts.
  */
 
 const MISTRAL_API_URL = "https://api.mistral.ai/v1/chat/completions";
@@ -66,18 +72,6 @@ export async function handleChat(
     return;
   }
 
-  const apiKey = env.MISTRAL_API_KEY;
-  if (!apiKey) {
-    res.writeHead(503, { "Content-Type": "application/json" });
-    res.end(
-      JSON.stringify({
-        error:
-          "IA non configurée : définissez MISTRAL_API_KEY dans .env.local côté serveur.",
-      })
-    );
-    return;
-  }
-
   let body: ChatRequestBody;
   try {
     const raw = await readBody(req);
@@ -112,6 +106,30 @@ export async function handleChat(
   }
 
   const history = (body.messages as ChatMessage[]).slice(-20);
+
+  // 🔴 Avant toute chose, et avant même de regarder si l'IA est configurée :
+  // le dernier message de la personne déclenche-t-il une réponse de crise ?
+  const dernierMessage = [...history].reverse().find((m) => m.role === "user");
+  if (dernierMessage) {
+    const crise = detecterDetresse(dernierMessage.text);
+    if (crise) {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ text: crise.texte, crisis: true }));
+      return;
+    }
+  }
+
+  const apiKey = env.MISTRAL_API_KEY;
+  if (!apiKey) {
+    res.writeHead(503, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({
+        error:
+          "IA non configurée : définissez MISTRAL_API_KEY dans .env.local côté serveur.",
+      })
+    );
+    return;
+  }
 
   try {
     const model = env.MISTRAL_MODEL ?? "mistral-small-latest";

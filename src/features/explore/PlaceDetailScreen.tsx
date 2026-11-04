@@ -1,14 +1,28 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { useExploreData, useVisitedPlaces } from "@/infrastructure/persistence";
+import {
+  useExploreData,
+  useVisitedPlaces,
+  readLastCoords,
+} from "@/infrastructure/persistence";
+import { osmGeoService } from "@/infrastructure/osmExploreService";
+import { fenetreMeteo } from "@/infrastructure/weatherService";
+import { decrireFenetre, type FenetreMeteo } from "@/domain/meteo";
 import { useProgression } from "@/app/ProgressionContext";
 import "./explore.css";
+
+type EtatMeteo =
+  | { statut: "chargement" }
+  | { statut: "indisponible" }
+  | { statut: "ok"; fenetre: FenetreMeteo | null };
 
 export default function PlaceDetailScreen() {
   const { placeId } = useParams<{ placeId: string }>();
   const { places, source, loading, error } = useExploreData();
   const { visited, toggleVisited } = useVisitedPlaces();
   const { reward } = useProgression();
+  const [meteo, setMeteo] = useState<EtatMeteo>({ statut: "chargement" });
+  const [walkMinutes, setWalkMinutes] = useState<number | null>(null);
 
   const place = places.find((p) => p.id === placeId);
   const isSample = source === "sample";
@@ -18,6 +32,36 @@ export default function PlaceDetailScreen() {
     reward("explore:place-opened", `place-open:${place.id}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [place?.id]);
+
+  useEffect(() => {
+    if (!place?.location) return;
+    let cancelled = false;
+    // "cancelled" évite qu'un résultat tardif (navigation vers un autre
+    // lieu pendant la requête) écrase l'état courant — pas de reset
+    // synchrone en tête d'effet (même piège React dans les deux effets).
+    fenetreMeteo(place.location).then((fenetre) => {
+      if (cancelled) return;
+      setMeteo(
+        fenetre === undefined ? { statut: "indisponible" } : { statut: "ok", fenetre }
+      );
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [place?.location]);
+
+  useEffect(() => {
+    if (!place?.location) return;
+    const from = readLastCoords();
+    if (!from) return;
+    let cancelled = false;
+    osmGeoService.estimateRouteTime(from, place.location, "walk").then((minutes) => {
+      if (!cancelled) setWalkMinutes(minutes);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [place?.location]);
 
   if (loading) {
     return (
@@ -71,6 +115,8 @@ export default function PlaceDetailScreen() {
           {place.location
             ? ` Coordonnées : ${place.location.lat.toFixed(4)}, ${place.location.lng.toFixed(4)}.`
             : ""}
+          {walkMinutes !== null ? ` À environ ${walkMinutes} min à pied d'ici.` : ""}
+          {meteo.statut === "ok" ? ` ${decrireFenetre(meteo.fenetre)}` : ""}
         </div>
       )}
 

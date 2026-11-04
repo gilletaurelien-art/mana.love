@@ -144,22 +144,50 @@ L'exploration propose deux sources, clairement étiquetées :
   « © OpenStreetMap contributors (ODbL) » affichées.
 
 Le proxy serveur (`server/geo.ts`) impose un User-Agent conforme à la
-politique OSM, met en cache 10 minutes, et valider/normalise les
-résultats. Aucune donnée de localisation n'est stockée : les coordonnées
-restent en mémoire le temps de la requête.
+politique OSM, met en cache 10 minutes (en mémoire serveur, jamais sur
+disque), et valide/normalise les résultats. ⚠️ Les coordonnées ne sont PAS
+stockées côté serveur — mais elles LE SONT côté client, dans
+`localStorage` (`mana.love.explore.coords.v1`, `persistence.ts`), pour
+réafficher le dernier lieu sans redemander la position à chaque visite.
+Elles partent avec le reste des données locales via le bouton de
+suppression de `/confidentialite`.
+
+### Routage piéton/vélo — branché, sur la fiche d'un lieu réel
+
+`GeoService.estimateRouteTime` n'était qu'un contrat dormant (toujours
+`null`). La route serveur `/api/geo/route` l'implémente désormais via
+l'instance publique `routing.openstreetmap.de` (profils `foot`/`bike`,
+même famille de politique d'usage qu'Overpass/Nominatim : User-Agent
+conforme, cache 10 minutes, pas de production à grande échelle). Sur la
+fiche d'un lieu réel, si une position a déjà été demandée pour
+l'exploration, un temps de marche estimé s'affiche.
+
+### Météo (Open-Meteo) — branché, sur la fiche d'un lieu réel
+
+Open-Meteo (gratuit, sans clé) alimente `src/domain/meteo.ts`, qui choisit
+la **meilleure fenêtre sèche** dans les 6 prochaines heures à l'endroit
+d'un lieu réel — pas seulement « il va pleuvoir », mais « il y a une
+fenêtre sèche vers 15h40 » quand elle existe, ou le dit explicitement
+sinon. La route serveur `server/weather.ts` proxifie l'API (cache 30 min,
+User-Agent conforme) ; `current_weather=true` et `timezone=auto` donnent
+l'heure "maintenant" et les prévisions horaires dans le **même fuseau**
+(celui du lieu), ce qui évite toute conversion de fuseau côté domaine.
+
+⚠️ Même agent qui *propose*, pas qui *agit* : aucune réservation, aucune
+alerte proactive, aucune notification, aucun déclenchement automatique
+d'une suggestion dans le chat. Deux premiers pas vers « l'agent qui agit
+sur l'exploration », pas la fin du chemin.
 
 ## Intégrations en attente
 
-1. **Routing pédestre (Valhalla/OSRM)** — `GeoService.estimateRouteTime`
-   existe mais renvoie `null` ; l'UI n'affiche donc aucun temps de trajet.
-2. **Audio (voix, paysages sonores)** — `src/domain/audio.ts` définit
+1. **Audio (voix, paysages sonores)** — `src/domain/audio.ts` définit
    `AudioCatalog` / `AudioPlayer` ; le catalogue radio reste vide tant que
    les droits ne sont pas établis.
-3. **Backend de progression autoritaire** — le registre est aujourd'hui un
+2. **Backend de progression autoritaire** — le registre est aujourd'hui un
    cache client ; le serveur devra valider les récompenses
    (idempotence, plafonds, déblocages atomiques) et servir de source de
    vérité.
-4. **Serveur de production** — les routes `/api/*` sont servies par le
+3. **Serveur de production** — les routes `/api/*` sont servies par le
    plugin Vite en développement ; en production, il faut un runtime Node
    équivalent qui réutilise `server/chat.ts` et `server/geo.ts`.
 5. **Mémoire déclarée et comptes** — `src/domain/memoire.ts` porte le

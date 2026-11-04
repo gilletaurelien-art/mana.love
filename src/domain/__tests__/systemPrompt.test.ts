@@ -31,6 +31,19 @@ describe("system prompt construction", () => {
     }
   });
 
+  /* 🔴 GARDE AJOUTÉ LE 3/11/2026 : avant ce test, le vouvoiement par défaut
+     (systemPrompt.ts) n'était tenu par AUCUN test — on pouvait supprimer
+     la ligne entière, les autres tests restaient verts. C'est le garde-fou
+     le plus direct contre le glissement vers un ton plus intime que décidé :
+     il doit être visible dans toute revue qui y touche. */
+  it("🔴 impose le vouvoiement par défaut, et dit que ce n'est pas au modèle de le changer", () => {
+    for (const p of PERSONALITIES) {
+      const prompt = buildSystemPrompt(p);
+      expect(prompt).toContain("vouvoiement par défaut");
+      expect(prompt).toContain("jamais tu ne le décides");
+    }
+  });
+
   it("answers in French and encourages real-life action", () => {
     const prompt = buildSystemPrompt(PERSONALITIES[0]);
     expect(prompt).toContain("français");
