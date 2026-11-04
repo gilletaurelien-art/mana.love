@@ -224,7 +224,16 @@ export type CleI18n =
   | "ciel.cielReelTitre"
   | "ciel.geoIndisponible"
   | "ciel.domeAria"
-  | "ciel.attribution";
+  | "ciel.attribution"
+  | "ciel.illumination"
+  | "lune.nouvelle"
+  | "lune.premier-croissant"
+  | "lune.premier-quartier"
+  | "lune.gibbeuse-croissante"
+  | "lune.pleine"
+  | "lune.gibbeuse-decroissante"
+  | "lune.dernier-quartier"
+  | "lune.dernier-croissant";
 
 /** Dictionnaire français complet — référence pour toutes les langues. */
 export const FR: Record<CleI18n, string> = {
@@ -459,6 +468,15 @@ export const FR: Record<CleI18n, string> = {
   "ciel.domeAria": "Carte du ciel visible, nord en haut",
   "ciel.attribution":
     "Données astronomiques : d3-celestial (Olaf Frohn, BSD-3-Clause), dérivées du catalogue HYG.",
+  "ciel.illumination": "{n}% éclairée",
+  "lune.nouvelle": "Nouvelle lune",
+  "lune.premier-croissant": "Premier croissant",
+  "lune.premier-quartier": "Premier quartier",
+  "lune.gibbeuse-croissante": "Gibbeuse croissante",
+  "lune.pleine": "Pleine lune",
+  "lune.gibbeuse-decroissante": "Gibbeuse décroissante",
+  "lune.dernier-quartier": "Dernier quartier",
+  "lune.dernier-croissant": "Dernier croissant",
 };
 
 export const EN: Partial<Record<CleI18n, string>> = {
@@ -690,6 +708,15 @@ export const EN: Partial<Record<CleI18n, string>> = {
   "ciel.domeAria": "Visible sky map, north at the top",
   "ciel.attribution":
     "Astronomical data: d3-celestial (Olaf Frohn, BSD-3-Clause), derived from the HYG catalog.",
+  "ciel.illumination": "{n}% illuminated",
+  "lune.nouvelle": "New moon",
+  "lune.premier-croissant": "Waxing crescent",
+  "lune.premier-quartier": "First quarter",
+  "lune.gibbeuse-croissante": "Waxing gibbous",
+  "lune.pleine": "Full moon",
+  "lune.gibbeuse-decroissante": "Waning gibbous",
+  "lune.dernier-quartier": "Last quarter",
+  "lune.dernier-croissant": "Waning crescent",
 };
 
 const DICTIONNAIRES: Record<Langue, Partial<Record<CleI18n, string>>> = {

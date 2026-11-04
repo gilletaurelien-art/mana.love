@@ -261,6 +261,21 @@ correspondant passe au rouge, puis restaurée).
 ⚠️ Démonstration (Paris) sans géolocalisation ; réel avec, via le même
 bouton explicite que l'exploration — jamais une position supposée.
 
+**Phase de la Lune** (`src/domain/lune.ts`) — même discipline : un
+calcul (époque de référence + période synodique, Meeus ch. 49), pas une
+donnée récupérée. ⚠️ Cette session n'a pas accès à un éphéméride en
+ligne pour croiser une date précise contre un almanach — plutôt que
+d'avancer une date non vérifiée, les tests portent sur des propriétés
+**physiques** du cycle, vraies quelle que soit l'époque de référence
+choisie : la phase se répète exactement une période synodique plus
+tard, l'illumination est nulle à la nouvelle lune et maximale à la
+pleine lune, et le croissant montant à J jours a la même illumination
+que le croissant descendant à J jours de l'autre côté de la pleine lune
+(symétrie) — vérifié par mutation sur le signe de l'illumination.
+L'icône (deux arcs SVG, bord fixe + terminateur) a été vérifiée
+visuellement avant intégration : les 8 phases rendues côte à côte
+reproduisent la progression réelle.
+
 ## Intégrations en attente
 
 1. **Audio (voix, paysages sonores)** — `src/domain/audio.ts` définit
