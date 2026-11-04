@@ -212,7 +212,19 @@ export type CleI18n =
   | "account.emailLabel"
   | "account.envoiEnCours"
   | "account.recevoirLeLien"
-  | "account.echecEnvoi";
+  | "account.echecEnvoi"
+  // ciel (astronomie)
+  | "nav.ciel"
+  | "ciel.eyebrow"
+  | "ciel.titre"
+  | "ciel.lead"
+  | "ciel.demoTitre"
+  | "ciel.demoTexte"
+  | "ciel.voirMonCiel"
+  | "ciel.cielReelTitre"
+  | "ciel.geoIndisponible"
+  | "ciel.domeAria"
+  | "ciel.attribution";
 
 /** Dictionnaire français complet — référence pour toutes les langues. */
 export const FR: Record<CleI18n, string> = {
@@ -433,6 +445,20 @@ export const FR: Record<CleI18n, string> = {
   "account.envoiEnCours": "Envoi…",
   "account.recevoirLeLien": "Recevoir le lien",
   "account.echecEnvoi": "Échec de l'envoi du lien.",
+
+  "nav.ciel": "Ciel",
+  "ciel.eyebrow": "Astronomie",
+  "ciel.titre": "La carte du ciel",
+  "ciel.lead": "Les étoiles visibles au-dessus de vous, à cet instant précis.",
+  "ciel.demoTitre": "Ciel de démonstration (Paris).",
+  "ciel.demoTexte":
+    "Ceci n'est pas le ciel au-dessus de vous — activez votre position pour voir le vôtre.",
+  "ciel.voirMonCiel": "Voir le ciel au-dessus de moi",
+  "ciel.cielReelTitre": "Le ciel au-dessus de vous, maintenant.",
+  "ciel.geoIndisponible": "La géolocalisation n'est pas disponible sur cet appareil.",
+  "ciel.domeAria": "Carte du ciel visible, nord en haut",
+  "ciel.attribution":
+    "Données astronomiques : d3-celestial (Olaf Frohn, BSD-3-Clause), dérivées du catalogue HYG.",
 };
 
 export const EN: Partial<Record<CleI18n, string>> = {
@@ -650,6 +676,20 @@ export const EN: Partial<Record<CleI18n, string>> = {
   "account.envoiEnCours": "Sending…",
   "account.recevoirLeLien": "Receive the link",
   "account.echecEnvoi": "Failed to send the link.",
+
+  "nav.ciel": "Sky",
+  "ciel.eyebrow": "Astronomy",
+  "ciel.titre": "The sky map",
+  "ciel.lead": "The stars visible above you, right now.",
+  "ciel.demoTitre": "Demonstration sky (Paris).",
+  "ciel.demoTexte":
+    "This isn't the sky above you — turn on your location to see your own.",
+  "ciel.voirMonCiel": "See the sky above me",
+  "ciel.cielReelTitre": "The sky above you, right now.",
+  "ciel.geoIndisponible": "Geolocation isn't available on this device.",
+  "ciel.domeAria": "Visible sky map, north at the top",
+  "ciel.attribution":
+    "Astronomical data: d3-celestial (Olaf Frohn, BSD-3-Clause), derived from the HYG catalog.",
 };
 
 const DICTIONNAIRES: Record<Langue, Partial<Record<CleI18n, string>>> = {

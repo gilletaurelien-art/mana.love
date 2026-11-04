@@ -88,6 +88,10 @@ s'ouvrent sur des surfaces plus claires sans perdre la signature MANA.
 - Modes : sommeil (séance guidée texte), action (engagement déclaré),
   MANAradio (catalogue, lecture honnêtement indisponible).
 - Confidentialité : page dédiée avec suppression réelle des données locales.
+- Astronomie (`/ciel`) : carte du ciel visible, étoiles et constellations
+  réelles (catalogue HYG via d3-celestial, BSD-3-Clause), position
+  calculée localement (aucune API) à partir de l'heure et du lieu —
+  démonstration (Paris) sans géolocalisation, réel avec.
 
 **Réel et fonctionnel avec configuration :**
 
@@ -224,6 +228,38 @@ signaler ; le test l'attrape.
   etc.) restent en français — ils ne sont pas des chaînes statiques que
   ce dictionnaire peut intercepter sans faire remonter la langue jusqu'au
   domaine.
+
+### Astronomie (`/ciel`) — carte du ciel calculée localement, aucune API
+
+`src/domain/ciel.ts` convertit des coordonnées équatoriales (ascension
+droite, déclinaison — fixes, ce que mesure un catalogue d'étoiles) en
+coordonnées horizontales (altitude, azimut — ce que voit un observateur
+précis, à un instant précis) par les formules classiques du temps
+sidéral de Greenwich (Meeus) et de la transformation équatorial→horizontal
+(Duffett-Smith). Aucun appel réseau pour la position : c'est un calcul,
+pas une donnée récupérée.
+
+Le catalogue (`public/ciel/*.json`, ~77 Ko) est dérivé de
+[d3-celestial](https://github.com/ofrohn/d3-celestial) (Olaf Frohn,
+BSD-3-Clause), lui-même dérivé du catalogue HYG (CC BY-SA 4.0) : 1018
+étoiles de magnitude ≤ 4.6 (visibles à l'œil nu), les lignes et noms des
+88 constellations. Vérifié contre une référence externe avant filtrage :
+l'étoile d'identifiant 32349 dans le fichier source correspond
+exactement à Sirius (même numéro HIP, même magnitude -1.44, mêmes
+coordonnées) — pas une supposition sur le format du fichier.
+
+🔴 **Vérifié par un invariant géométrique, pas par une table de
+référence à croire sur parole** : pour un observateur dans l'hémisphère
+nord, une étoile de déclinaison ≈ 90° (quasi au pôle céleste nord, comme
+Polaris) a une altitude ≈ la latitude de l'observateur, à toute heure —
+une conséquence directe de l'axe de rotation terrestre, testée sur 4
+combinaisons latitude/heure. L'ambiguïté de signe de l'azimut
+(Duffett-Smith) est vérifiée par symétrie est/ouest du méridien, et par
+mutation (la correction de signe retirée, confirmé que le test
+correspondant passe au rouge, puis restaurée).
+
+⚠️ Démonstration (Paris) sans géolocalisation ; réel avec, via le même
+bouton explicite que l'exploration — jamais une position supposée.
 
 ## Intégrations en attente
 
