@@ -348,6 +348,17 @@ pas via HTTP — passe au rouge, puis restauré).
 production (injectées par l'hébergeur), jamais d'un fichier `.env.local`
 lu sur disque comme en développement.
 
+### Découvrabilité — `/ciel` et `/theme-astral` depuis l'accueil
+
+Ces deux écrans n'étaient accessibles que par leur URL directe ou le
+menu de navigation — rien sur la page d'accueil n'y menait. La section
+« Moments MANA » de l'accueil (`HomeScreen.tsx`), qui donnait déjà accès
+à Sommeil/Action/MANAradio, porte maintenant aussi « Carte du ciel » et
+« Thème astral », avec les mêmes textes traduits (FR/EN) que le reste du
+site. Vérifié visuellement (capture d'écran de l'accueil) : les deux
+nouvelles cartes s'affichent avec leur icône, leur titre et leur
+description.
+
 ## Intégrations en attente
 
 1. **Audio (voix, paysages sonores)** — `src/domain/audio.ts` définit
