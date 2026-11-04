@@ -5,12 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && vite build --ssr server/prod.ts --outDir dist-server --emptyOutDir",
     "lint": "eslint . && npm run check:origins",
     "typecheck": "tsc -b --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "preview": "vite preview",
+    "start": "node dist-server/prod.js",
     "check:origins": "node scripts/check-origins.mjs src --app && node scripts/check-origins.mjs server --serveur"
   },
   "dependencies": {
