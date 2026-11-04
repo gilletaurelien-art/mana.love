@@ -276,6 +276,41 @@ L'icône (deux arcs SVG, bord fixe + terminateur) a été vérifiée
 visuellement avant intégration : les 8 phases rendues côte à côte
 reproduisent la progression réelle.
 
+### Thème astral (`/theme-astral`) — positions réelles, lecture symbolique assumée
+
+`src/domain/themeAstral.ts` calcule la longitude écliptique réelle du
+Soleil, de la Lune et des 5 planètes classiques (Mercure, Vénus, Mars,
+Jupiter, Saturne) à une date donnée — éléments kepleriens moyens
+(Standish/JPL, table standard 1800-2050), équation de Kepler résolue par
+Newton-Raphson, rotation vers l'écliptique. Même principe que `ciel.ts` :
+un calcul, pas une donnée récupérée.
+
+⭐ **La distinction qui tient tout le module** : la position d'un astre
+est un fait astronomique calculé ; le sens attribué au signe qu'elle
+occupe est une tradition symbolique, pas une mesure. L'écran l'affiche
+explicitement ("Lecture symbolique, pas une science") et rappelle que
+MANA reste une IA — cohérent avec le garde-fou déjà posé dans
+`systemPrompt.ts` ("tu n'es pas un être surnaturel"). Aucun texte
+d'interprétation par signe n'est fourni : ce serait du contenu inventé
+présenté comme un sens, exactement ce que ce module refuse de faire.
+
+⚠️ **Vérification différente de celle du catalogue d'étoiles** : pas
+d'identifiant à croiser contre une référence externe cette fois (les
+éléments orbitaux sont reconstitués de mémoire, pas consultés cette
+session). Vérifié par deux invariants physiques, vrais indépendamment de
+l'exactitude fine des coefficients : la longitude du Soleil vaut
+0°/90°/180°/270° aux équinoxes et solstices (vrai *par définition* du
+repère écliptique) ; Mercure et Vénus ne s'éloignent jamais du Soleil
+au-delà de leur élongation maximale (~28° et ~48°, conséquence directe
+de leur orbite intérieure à celle de la Terre) — testé sur une année
+complète, et vérifié par mutation (une rotation écliptique cassée,
+confirmé que les deux bornes d'élongation sont violées, puis restaurée).
+
+⛔ Pas d'ascendant ni de maisons dans cette première version : ils
+demandent une heure de naissance précise ET un lieu, et un système de
+maisons à choisir (Placidus, maisons égales…) — un chantier à part,
+signalé comme tel à l'écran plutôt que deviné.
+
 ## Intégrations en attente
 
 1. **Audio (voix, paysages sonores)** — `src/domain/audio.ts` définit

@@ -9,6 +9,7 @@ const NAV_KEYS = [
   { to: "/univers", cle: "nav.univers" as const },
   { to: "/ecouter", cle: "nav.ecouter" as const },
   { to: "/ciel", cle: "nav.ciel" as const },
+  { to: "/theme-astral", cle: "nav.themeAstral" as const },
   { to: "/compte", cle: "nav.compte" as const },
 ];
 
