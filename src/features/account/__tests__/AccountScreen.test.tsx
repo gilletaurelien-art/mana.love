@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { AuthProvider } from "@/app/AuthContext";
+import { LanguageProvider } from "@/app/LanguageContext";
 import AccountScreen from "../AccountScreen";
 
 /**
@@ -14,9 +15,11 @@ describe("AccountScreen — sans configuration (état réel des tests)", () => {
   it("affiche le bandeau honnête, jamais un formulaire inerte", () => {
     render(
       <MemoryRouter>
-        <AuthProvider>
-          <AccountScreen />
-        </AuthProvider>
+        <LanguageProvider>
+          <AuthProvider>
+            <AccountScreen />
+          </AuthProvider>
+        </LanguageProvider>
       </MemoryRouter>
     );
     expect(screen.getByText(/Compte non configuré/)).toBeInTheDocument();

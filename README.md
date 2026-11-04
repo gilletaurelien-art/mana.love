@@ -200,6 +200,31 @@ fait refuser à tort, puis restauré).
 ⚠️ Le SDK ajoute ~220 Ko au bundle (308 Ko → 533 Ko) : non code-splitté
 pour l'instant, chargé même pour qui ne visite jamais `/compte`.
 
+### Internationalisation — les dix écrans, pas seulement l'accueil
+
+Jusqu'au 4/11, un seul écran (l'accueil) utilisait vraiment `src/i18n/` ;
+les neuf autres avaient leur texte en dur, en français — un écart déjà
+repéré dans le cadrage (dépôt `mana`, §V). Les dix écrans utilisent
+maintenant `useI18n()` : conversation, exploration (liste, détail lieu,
+détail expérience), panthéon, sommeil, action, radio, confidentialité,
+compte. Un test verrouille la complétude du dictionnaire anglais (`src/i18n/__tests__/i18n.test.ts`)
+— une clé FR sans équivalent EN se rabat sur le français sans jamais le
+signaler ; le test l'attrape.
+
+⚠️ **Ce que ça ne couvre PAS**, par construction, pas par oubli :
+- le **contenu du domaine** — noms et lore des personnalités, lieux et
+  expériences d'exemple — reste dans sa langue d'origine (français) ;
+  traduire du contenu éditorial demande une traduction par entrée, pas un
+  dictionnaire de chrome ;
+- la **conversation elle-même** : `systemPrompt.ts:17` ordonne au modèle
+  de répondre en français, verrouillé par un test — changer la langue de
+  l'interface ne change pas la langue de MANA ;
+- le **texte généré par le domaine** (la phrase de `decrireFenetre()`
+  pour la météo) et les **messages d'erreur runtime** (échec réseau,
+  etc.) restent en français — ils ne sont pas des chaînes statiques que
+  ce dictionnaire peut intercepter sans faire remonter la langue jusqu'au
+  domaine.
+
 ## Intégrations en attente
 
 1. **Audio (voix, paysages sonores)** — `src/domain/audio.ts` définit

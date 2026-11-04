@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { useAuth, useAuthActions } from "@/app/AuthContext";
 import { envoyerLienMagique } from "@/infrastructure/supabaseAuth";
+import { useI18n } from "@/app/LanguageContext";
 import "./account.css";
 
 type EtatEnvoi = "repos" | "envoi" | "envoye" | "erreur";
@@ -8,6 +9,7 @@ type EtatEnvoi = "repos" | "envoi" | "envoye" | "erreur";
 export default function AccountScreen() {
   const { configure, session, chargement } = useAuth();
   const { seDeconnecter } = useAuthActions();
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [etat, setEtat] = useState<EtatEnvoi>("repos");
   const [erreur, setErreur] = useState<string | null>(null);
@@ -16,17 +18,13 @@ export default function AccountScreen() {
     return (
       <div className="stack stack-4 account">
         <div className="page-header">
-          <p className="eyebrow">Compte</p>
-          <h1>Pas encore disponible</h1>
+          <p className="eyebrow">{t("account.eyebrow")}</p>
+          <h1>{t("account.pasEncoreDisponible")}</h1>
         </div>
         <div className="demo-banner" role="note">
           <span aria-hidden="true">✦</span>
           <p>
-            <strong>Compte non configuré.</strong> Cette fonctionnalité attend
-            qu'un projet Supabase soit provisionné — une décision du
-            fondateur, pas du code. Sans elle, la conversation reste
-            pleinement utilisable en mode démo, sans mémoire d'une visite à
-            l'autre.
+            <strong>{t("account.nonConfigureTitre")}</strong> {t("account.nonConfigureTexte")}
           </p>
         </div>
       </div>
@@ -46,8 +44,8 @@ export default function AccountScreen() {
     return (
       <div className="stack stack-4 account">
         <div className="page-header">
-          <p className="eyebrow">Compte</p>
-          <h1>Connecté·e</h1>
+          <p className="eyebrow">{t("account.eyebrow")}</p>
+          <h1>{t("account.connecte")}</h1>
         </div>
         <p className="lead">{session.user.email}</p>
         <button
@@ -55,7 +53,7 @@ export default function AccountScreen() {
           type="button"
           onClick={() => void seDeconnecter()}
         >
-          Se déconnecter
+          {t("account.seDeconnecter")}
         </button>
       </div>
     );
@@ -70,29 +68,27 @@ export default function AccountScreen() {
       setEtat("envoye");
     } else {
       setEtat("erreur");
-      setErreur(resultat.erreur ?? "Échec de l'envoi du lien.");
+      setErreur(resultat.erreur ?? t("account.echecEnvoi"));
     }
   }
 
   return (
     <div className="stack stack-4 account">
       <div className="page-header">
-        <p className="eyebrow">Compte</p>
-        <h1>Se connecter</h1>
-        <p className="lead">
-          Un lien de connexion est envoyé par email — aucun mot de passe à
-          retenir.
-        </p>
+        <p className="eyebrow">{t("account.eyebrow")}</p>
+        <h1>{t("account.seConnecter")}</h1>
+        <p className="lead">{t("account.lienTexte")}</p>
       </div>
 
       {etat === "envoye" ? (
         <p className="muted">
-          Lien envoyé à <strong>{email}</strong>. Ouvrez-le pour vous
-          connecter.
+          {t("account.lienEnvoyeAvant")}
+          <strong>{email}</strong>
+          {t("account.lienEnvoyeApres")}
         </p>
       ) : (
         <form className="stack stack-3 account__form" onSubmit={envoyer}>
-          <label htmlFor="account-email">Email</label>
+          <label htmlFor="account-email">{t("account.emailLabel")}</label>
           <input
             id="account-email"
             type="email"
@@ -102,7 +98,7 @@ export default function AccountScreen() {
             onChange={(e) => setEmail(e.target.value)}
           />
           <button className="btn btn-primary" type="submit" disabled={etat === "envoi"}>
-            {etat === "envoi" ? "Envoi…" : "Recevoir le lien"}
+            {etat === "envoi" ? t("account.envoiEnCours") : t("account.recevoirLeLien")}
           </button>
           {etat === "erreur" && erreur && (
             <p className="muted" role="alert">

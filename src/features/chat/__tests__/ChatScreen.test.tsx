@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor, within } from "@testing-library/rea
 import { MemoryRouter } from "react-router-dom";
 import ChatScreen from "../ChatScreen";
 import { ProgressionProvider } from "@/app/ProgressionContext";
+import { LanguageProvider } from "@/app/LanguageContext";
 
 /**
  * 🔴 Test d'intégration, pas unitaire — même raison que
@@ -23,9 +24,11 @@ vi.mock("@/app/ChatProviderContext", () => ({
 function renderChat() {
   render(
     <MemoryRouter initialEntries={["/chat"]}>
-      <ProgressionProvider>
-        <ChatScreen />
-      </ProgressionProvider>
+      <LanguageProvider>
+        <ProgressionProvider>
+          <ChatScreen />
+        </ProgressionProvider>
+      </LanguageProvider>
     </MemoryRouter>
   );
 }

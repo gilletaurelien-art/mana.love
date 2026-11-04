@@ -1,25 +1,22 @@
 import { Link } from "react-router-dom";
 import { RADIO_CATALOG } from "@/infrastructure/radioCatalog";
+import { useI18n } from "@/app/LanguageContext";
 import "./modes.css";
 
 export default function RadioScreen() {
+  const { t } = useI18n();
   return (
     <div className="mode">
       <div className="page-header">
-        <p className="eyebrow">MANAradio</p>
-        <h1>Écouter le monde</h1>
-        <p className="lead">
-          Des paysages sonores pour accompagner un moment calme — jamais en
-          autoplay, toujours sous votre contrôle.
-        </p>
+        <p className="eyebrow">{t("radio.eyebrow")}</p>
+        <h1>{t("radio.titre")}</h1>
+        <p className="lead">{t("radio.lead")}</p>
       </div>
 
       <div className="demo-banner" role="note">
         <span aria-hidden="true">✦</span>
         <p>
-          <strong>Bientôt.</strong> Le catalogue arrive — uniquement des sons
-          dont les droits sont clairs. Les entrées ci-dessous donnent un
-          avant-goût.
+          <strong>{t("radio.bientotTitre")}</strong> {t("radio.bientotTexte")}
         </p>
       </div>
 
@@ -33,8 +30,12 @@ export default function RadioScreen() {
               </p>
             </div>
             <div className="radio__controls">
-              <button className="btn btn-ghost btn-sm" disabled aria-label={`Lecture indisponible pour ${track.title}`}>
-                ▶ Indisponible
+              <button
+                className="btn btn-ghost btn-sm"
+                disabled
+                aria-label={t("radio.lectureIndisponible", { titre: track.title })}
+              >
+                {t("radio.indisponible")}
               </button>
             </div>
           </li>
@@ -42,7 +43,7 @@ export default function RadioScreen() {
       </ul>
 
       <p className="quiet">
-        Envie d'un moment calme avant de dormir ? <Link to="/sommeil">MANA Sleep</Link>
+        {t("radio.envieMomentCalme")} <Link to="/sommeil">{t("radio.manaSleep")}</Link>
       </p>
     </div>
   );

@@ -2,28 +2,26 @@ import { Link } from "react-router-dom";
 import { useProgression } from "@/app/ProgressionContext";
 import { sortedPersonalities } from "@/domain/personalityRegistry";
 import { unlockStatusFor } from "@/domain/progression";
+import { useI18n } from "@/app/LanguageContext";
 import "./pantheon.css";
 
 export default function PantheonScreen() {
   const { balance } = useProgression();
   const all = sortedPersonalities();
+  const { t } = useI18n();
 
   return (
     <div className="pantheon">
       <div className="page-header">
-        <p className="eyebrow">Univers</p>
-        <h1>Le panthéon</h1>
-        <p className="lead">
-          Chaque déesse a sa voix et son histoire. Vos découvertes ouvrent de
-          nouvelles rencontres.
-        </p>
+        <p className="eyebrow">{t("pantheon.eyebrow")}</p>
+        <h1>{t("pantheon.titre")}</h1>
+        <p className="lead">{t("pantheon.lead")}</p>
       </div>
 
       <div className="demo-banner" role="note">
         <span aria-hidden="true">✦</span>
         <p>
-          <strong>Personnalités de démonstration.</strong> Univers de fiction,
-          créés pour MANA.love.
+          <strong>{t("pantheon.demoTitre")}</strong> {t("pantheon.demoTexte")}
         </p>
       </div>
 
@@ -50,21 +48,21 @@ export default function PantheonScreen() {
                 {status.unlocked ? (
                   <div className="pantheon-card__actions">
                     <Link to={`/parler?avec=${p.id}`} className="btn btn-primary btn-sm">
-                      Parler à {p.name}
+                      {t("pantheon.parlerA", { nom: p.name })}
                     </Link>
                   </div>
                 ) : (
                   <div className="pantheon-card__lockinfo">
-                    <span className="tag tag--locked">Verrouillée</span>
+                    <span className="tag tag--locked">{t("pantheon.verrouillee")}</span>
                     <span className="quiet">
-                      {p.unlock.kind === "mana-points" ? `${p.unlock.threshold} points` : ""}
+                      {p.unlock.kind === "mana-points" ? t("pantheon.points", { n: p.unlock.threshold }) : ""}
                     </span>
                   </div>
                 )}
 
                 {p.id !== "mana" && (
                   <details className="pantheon-card__lore">
-                    <summary>Son histoire — fiction</summary>
+                    <summary>{t("pantheon.histoireFiction")}</summary>
                     <p>{p.lore}</p>
                   </details>
                 )}

@@ -1,73 +1,49 @@
 import { useState } from "react";
+import { useI18n } from "@/app/LanguageContext";
 import "./privacy.css";
 
 export default function PrivacyScreen() {
+  const { t } = useI18n();
   return (
     <article className="privacy">
       <div className="page-header">
-        <p className="eyebrow">Confidentialité & données</p>
-        <h1>Vos données, en toute clarté</h1>
+        <p className="eyebrow">{t("common.confidentialite")}</p>
+        <h1>{t("privacy.titre")}</h1>
       </div>
 
       <section className="stack stack-4">
-        <h2>Ce qui est stocké, aujourd'hui</h2>
-        <p className="muted">
-          Dans cette première version, tout reste sur votre appareil, dans le
-          stockage local de votre navigateur (localStorage) : vos conversations
-          par personnalité, vos lieux visités et votre registre de points MANA.
-          Rien de tout cela ne quitte votre appareil.
-        </p>
-        <p className="muted">
-          Deux exceptions, déjà actives aujourd'hui, qui ne sont PAS du
-          stockage à votre nom : si vous demandez des lieux réels autour de
-          vous, vos coordonnées transitent par notre serveur vers
-          OpenStreetMap, et restent en mémoire du serveur jusqu'à 10
-          minutes — pour éviter de répéter la même recherche, jamais pour
-          vous identifier ; et si l'assistant est connecté à un modèle, le
-          texte de vos messages transite par notre serveur vers notre
-          fournisseur de modèle, sans y être écrit. Dans les deux cas,
-          notre serveur relaie — il ne tient pas de dossier sur vous.
-        </p>
+        <h2>{t("privacy.stockeTitre")}</h2>
+        <p className="muted">{t("privacy.stockeTexte1")}</p>
+        <p className="muted">{t("privacy.stockeTexte2")}</p>
       </section>
 
       <section className="stack stack-4">
-        <h2>Ce que nous ne faisons pas</h2>
+        <h2>{t("privacy.neFaisonsPasTitre")}</h2>
         <ul className="privacy__list">
-          <li>Nous ne vendons ni ne partageons vos données.</li>
-          <li>Nous ne réutilisons pas le contexte d'une personnalité dans une autre sans votre accord explicite.</li>
-          <li>Nous ne concevons pas de mécaniques de dépendance, de culpabilisation ou de jalousie artificielle.</li>
-          <li>Nous ne récompensons ni le temps d'écran, ni le volume de messages, ni la réouverture répétée de l'app.</li>
+          <li>{t("privacy.neFaisonsPas1")}</li>
+          <li>{t("privacy.neFaisonsPas2")}</li>
+          <li>{t("privacy.neFaisonsPas3")}</li>
+          <li>{t("privacy.neFaisonsPas4")}</li>
         </ul>
       </section>
 
       <section className="stack stack-4">
-        <h2>Supprimer vos données</h2>
-        <p className="muted">
-          Vous pouvez effacer l'ensemble de vos données locales à tout moment
-          via le bouton ci-dessous, ou en vidant les données de site de votre
-          navigateur.
-        </p>
-        <p className="muted quiet">
-          Note honnête : dans cette version, la suppression ne concerne que le
-          stockage local de ce navigateur. Quand un backend sera en place, la
-          suppression s'étendra aux données serveur.
-        </p>
+        <h2>{t("privacy.supprimerTitre")}</h2>
+        <p className="muted">{t("privacy.supprimerTexte")}</p>
+        <p className="muted quiet">{t("privacy.supprimerNote")}</p>
         <DeleteAllButton />
       </section>
 
       <section className="stack stack-4">
-        <h2>Sécurité</h2>
-        <p className="muted">
-          Aucun chiffrement supplémentaire n'est implémenté au-delà de celui de
-          votre navigateur et de votre appareil. Nous ne prétendons pas offrir
-          une protection que l'infrastructure actuelle ne fournit pas.
-        </p>
+        <h2>{t("privacy.securiteTitre")}</h2>
+        <p className="muted">{t("privacy.securiteTexte")}</p>
       </section>
     </article>
   );
 }
 
 function DeleteAllButton() {
+  const { t } = useI18n();
   const [deleted, setDeleted] = useState(false);
   const [confirming, setConfirming] = useState(false);
 
@@ -80,12 +56,7 @@ function DeleteAllButton() {
   }
 
   if (deleted) {
-    return (
-      <p className="notice notice--info">
-        Vos données locales ont été supprimées. La page d'accueil affichera un
-        état neuf au prochain chargement.
-      </p>
-    );
+    return <p className="notice notice--info">{t("privacy.donneesSupprimees")}</p>;
   }
 
   return (
@@ -93,15 +64,15 @@ function DeleteAllButton() {
       {confirming ? (
         <>
           <button className="btn btn-primary" onClick={deleteAll}>
-            Confirmer la suppression
+            {t("privacy.confirmerSuppression")}
           </button>
           <button className="btn btn-ghost" onClick={() => setConfirming(false)}>
-            Annuler
+            {t("privacy.annuler")}
           </button>
         </>
       ) : (
         <button className="btn btn-ghost" onClick={() => setConfirming(true)}>
-          Supprimer toutes mes données locales
+          {t("privacy.supprimerToutesMesDonnees")}
         </button>
       )}
     </div>
