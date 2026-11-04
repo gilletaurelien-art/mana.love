@@ -151,6 +151,20 @@
   line-height: 1;
 }
 
+/* ⭐ 6 items à 58px min chacun dépassent 320px (iPhone SE et
+   équivalents) — resserré pour que rien ne sorte du cadre. */
+@media (max-width: 360px) {
+  .mobilenav__item {
+    padding: var(--sp-1) var(--sp-2);
+    min-width: 0;
+    font-size: 0.6rem;
+  }
+
+  .mobilenav__glyph {
+    font-size: 0.95rem;
+  }
+}
+
 @media (min-width: 768px) {
   .topbar__nav {
     display: flex;

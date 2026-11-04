@@ -7,6 +7,7 @@ const ITEMS = [
   { to: "/explorer", cle: "nav.explorer", glyph: "✧" },
   { to: "/univers", cle: "nav.univers", glyph: "✿" },
   { to: "/ecouter", cle: "nav.ecouter", glyph: "♪" },
+  { to: "/compte", cle: "nav.compte", glyph: "☍" },
 ] as const;
 
 export default function MobileNav() {
