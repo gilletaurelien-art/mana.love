@@ -201,8 +201,10 @@ service. Vérifié par mutation (le motif a été temporairement élargi à
 `.from(` nu, confirmé qu'`Array.from(`/`Buffer.from(` se seraient alors
 fait refuser à tort, puis restauré).
 
-⚠️ Le SDK ajoute ~220 Ko au bundle (308 Ko → 533 Ko) : non code-splitté
-pour l'instant, chargé même pour qui ne visite jamais `/compte`.
+✅ Le SDK (~214 Ko) est maintenant importé **en dynamique** (`await
+import("@supabase/supabase-js")`, dans `obtenirClient()`) au lieu d'un
+`import` statique en haut de fichier — voir « Découpage par route » plus
+bas pour la mesure et la méthode.
 
 ### Internationalisation — les dix écrans, pas seulement l'accueil
 
@@ -347,6 +349,47 @@ pas via HTTP — passe au rouge, puis restauré).
 ⚠️ Les variables d'environnement viennent de `process.env` en
 production (injectées par l'hébergeur), jamais d'un fichier `.env.local`
 lu sur disque comme en développement.
+
+### Découpage par route (`React.lazy`) — mesuré, pas supposé
+
+Avant cette PR, `main.tsx` importait les douze écrans en statique : un
+seul chunk JS de **565,79 Ko** (gzip 164,61 Ko), grossissant à chaque
+nouveau module (#11, #12, #13 l'ont fait grossir sans qu'aucun garde ne
+s'en inquiète), téléchargé en entier par qui ne visite que la page
+d'accueil.
+
+- Tous les écrans sauf `HomeScreen` (la page d'atterrissage, affichée
+  sans flash de chargement) sont maintenant chargés via
+  `lazy(() => import(...))`, avec un repli `<Suspense>` minimal pendant
+  le chargement de la route.
+- ⭐ **Le vrai goulot n'était pas le découpage par route lui-même, mais
+  un `import` statique transitif** : `AuthContext` (monté à la racine,
+  pour toute l'app) importait `supabaseAuth.ts`, qui importait
+  `@supabase/supabase-js` (~214 Ko) en statique — Vite l'incluait donc
+  dans le chunk principal quoi qu'il arrive, même `AccountScreen` lazy,
+  même sans jamais appeler `obtenirClient()` (le cas réel aujourd'hui,
+  `compteConfigure()` étant `false` tant qu'aucun projet Supabase
+  n'existe). Le découpage par route seul avait fait tomber le chunk
+  principal à 493,09 Ko — un gain réel mais bien inférieur à ce que les
+  ~220 Ko mesurés en #9 laissaient attendre.
+- Fixé en rendant l'import du SDK **dynamique**, dans `obtenirClient()`
+  lui-même (`const { createClient } = await import("@supabase/supabase-js")`)
+  — il devient son propre chunk, jamais téléchargé tant que personne
+  n'appelle réellement une fonction d'authentification.
+
+**Mesuré** (`npm run build`, comparé avant/après) :
+
+| | Avant (#14) | Après le découpage par route | Après l'import dynamique du SDK |
+|---|---|---|---|
+| Chunk principal (JS) | 565,79 Ko (gzip 164,61 Ko) | 493,09 Ko | **278,49 Ko (gzip 89,21 Ko)** |
+| SDK Supabase | inclus dans le chunk principal | toujours inclus (dans `AccountScreen`, trop petit pour l'expliquer — signe qu'il restait ailleurs) | chunk séparé, ~214 Ko, chargé seulement si `obtenirClient()` est appelé |
+
+🔴 Vérifié par la liste des chunks produits par `vite build`, pas par
+lecture de code : `AccountScreen-*.js` ne pesait que 2,62 Ko après le
+découpage par route seul — bien trop peu pour contenir le SDK, ce qui a
+mené à chercher où il se trouvait réellement (dans le chunk principal,
+via `AuthContext`) plutôt que d'accepter une baisse partielle sans
+l'expliquer.
 
 ### Découvrabilité — `/ciel` et `/theme-astral` depuis l'accueil
 
