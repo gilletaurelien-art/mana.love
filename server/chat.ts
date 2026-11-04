@@ -1,12 +1,25 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { buildSystemPrompt } from "../src/domain/systemPrompt";
 import { getPersonality } from "../src/domain/personalityRegistry";
+import { souvenirsOperants } from "../src/domain/memoire";
+import type { SouvenirDeclare } from "../src/domain/memoire";
 import { detecterDetresse } from "../src/domain/detresse";
 import type { ChatMessage } from "../src/domain/personalities";
 
 /**
  * Route serveur /api/chat — proxy Mistral.
  * MISTRAL_API_KEY reste côté serveur, jamais exposée au navigateur.
+ *
+ * ⭐ La requête accepte un champ `souvenirs` OPTIONNEL : la moitié LECTURE
+ * du contrat mémoire ↔ conversation, reprise de la forme mesurée de
+ * `mana-presence` sur l'ancien site. Ce qui est reçu est FILTRÉ ici par
+ * `souvenirsOperants()` avant d'atteindre le prompt — un souvenir périmé
+ * ou désactivé ne parvient jamais au modèle.
+ *
+ * ⚠️ AUCUN CLIENT N'ENVOIE ENCORE CE CHAMP, et c'est assumé : il n'existe
+ * ni base provisionnée ni écran pour produire des souvenirs. Cette route
+ * est prête pour le jour où ils arriveront, et testée comme telle — mais
+ * elle ne promet rien aujourd'hui que l'application sache tenir.
  *
  * 🔴 LA DÉTECTION DE DÉTRESSE PASSE AVANT TOUT — avant même la vérification
  * de la clé Mistral. Un message de crise obtient une réponse scriptée et
@@ -19,6 +32,7 @@ const MISTRAL_API_URL = "https://api.mistral.ai/v1/chat/completions";
 interface ChatRequestBody {
   messages?: unknown;
   personalityId?: unknown;
+  souvenirs?: unknown;
 }
 
 function isChatMessage(value: unknown): value is ChatMessage {
@@ -28,6 +42,22 @@ function isChatMessage(value: unknown): value is ChatMessage {
     (v.role === "user" || v.role === "companion") &&
     typeof v.text === "string" &&
     typeof v.createdAt === "string"
+  );
+}
+
+function isSouvenirDeclare(value: unknown): value is SouvenirDeclare {
+  if (typeof value !== "object" || value === null) return false;
+  const v = value as Record<string, unknown>;
+  return (
+    typeof v.id === "string" &&
+    (v.genre === "preference" ||
+      v.genre === "intention" ||
+      v.genre === "rappel" ||
+      v.genre === "contexte") &&
+    typeof v.texte === "string" &&
+    typeof v.confirmeLe === "string" &&
+    (v.expireLe === null || typeof v.expireLe === "string") &&
+    (v.desactiveLe === null || typeof v.desactiveLe === "string")
   );
 }
 
@@ -63,6 +93,16 @@ export async function handleChat(
     res.writeHead(400, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ error: "Messages invalides." }));
     return;
+  }
+
+  let souvenirs: SouvenirDeclare[] = [];
+  if (body.souvenirs !== undefined) {
+    if (!Array.isArray(body.souvenirs) || !body.souvenirs.every(isSouvenirDeclare)) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Souvenirs invalides." }));
+      return;
+    }
+    souvenirs = body.souvenirs as SouvenirDeclare[];
   }
 
   const history = (body.messages as ChatMessage[]).slice(-20);
@@ -102,7 +142,15 @@ export async function handleChat(
       body: JSON.stringify({
         model,
         messages: [
-          { role: "system", content: buildSystemPrompt(personality) },
+          {
+            role: "system",
+            // 🔴 Le filtre est ici, et nulle part ailleurs : ce qui est périmé
+            // ou désactivé n'atteint jamais le modèle.
+            content: buildSystemPrompt(
+              personality,
+              souvenirsOperants(souvenirs, new Date().toISOString())
+            ),
+          },
           ...history.map((m) => ({
             role: m.role === "user" ? "user" : "assistant",
             content: m.text,
