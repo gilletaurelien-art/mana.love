@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "@/app/LanguageContext";
 import { chargerCatalogueCiel, type CatalogueCiel } from "@/infrastructure/cielCatalogue";
 import { etoilesVisibles, projeterSurDome, positionHorizon, type Lieu } from "@/domain/ciel";
+import { phaseLunaire } from "@/domain/lune";
+import { MoonIcon } from "./MoonIcon";
 import "./ciel.css";
 
 /** Paris — lieu de démonstration explicite, jamais une position supposée réelle. */
@@ -47,6 +49,7 @@ export default function CielScreen() {
 
   const lieuEffectif = lieu ?? LIEU_DEMO;
   const estDemo = lieu === null;
+  const lune = useMemo(() => phaseLunaire(maintenant), [maintenant]);
 
   const visibles = useMemo(() => {
     if (!catalogue) return [];
@@ -103,6 +106,14 @@ export default function CielScreen() {
           <strong>{t("ciel.cielReelTitre")}</strong>
         </div>
       )}
+
+      <div className="ciel__lune">
+        <MoonIcon illumination={lune.illumination} croissante={lune.croissante} />
+        <div>
+          <strong>{t(`lune.${lune.id}`)}</strong>
+          <p className="quiet">{t("ciel.illumination", { n: Math.round(lune.illumination * 100) })}</p>
+        </div>
+      </div>
 
       <div className="ciel__dome-wrap">
         <svg
