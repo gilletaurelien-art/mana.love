@@ -60,6 +60,33 @@ describe("le garde accepte ce qui est légitime", () => {
     const result = await runGuard(sandbox);
     expect(result.code).toBe(0);
   });
+
+  it("🔴 Array.from( / Buffer.from( ne sont PAS pris pour un accès Supabase", async () => {
+    const file = path.join(sandbox, "natif.ts");
+    await writeFile(
+      file,
+      'const a = Array.from({ length: 3 }, (_, i) => i);\nconst b = Buffer.from("x");\n'
+    );
+    const result = await runGuard(sandbox, "app");
+    expect(result.code).toBe(0);
+    await rm(file);
+  });
+
+  it("🔴 accepte le SDK Supabase côté app pour l'AUTHENTIFICATION (pas de données)", async () => {
+    const file = path.join(sandbox, "auth-ok.ts");
+    await writeFile(
+      file,
+      [
+        'import { createClient } from "@supabase/supabase-js";',
+        'const client = createClient("url", "cle");',
+        'await client.auth.signInWithOtp({ email: "a@b.c" });',
+        'await client.auth.getSession();',
+      ].join("\n")
+    );
+    const result = await runGuard(sandbox);
+    expect(result.code).toBe(0);
+    await rm(file);
+  });
 });
 
 describe("le garde attrape chaque mutation — sinon il est cassé", () => {
@@ -75,12 +102,20 @@ describe("le garde attrape chaque mutation — sinon il est cassé", () => {
     await rm(file);
   });
 
-  it("MUTATION 2 : supabase doit échouer même en commentaire actif", async () => {
+  it("MUTATION 2 : .from( doit échouer côté app — aucun accès aux données depuis le navigateur", async () => {
     const file = path.join(sandbox, "mut2.ts");
-    await writeFile(file, 'const client = createClient("supabase.co");\n');
-    const result = await runGuard(sandbox);
+    await writeFile(file, 'const r = await client.from("memoire_declaree").select();\n');
+    const result = await runGuard(sandbox, "app");
     expect(result.code).not.toBe(0);
-    expect(result.stderr).toContain("supabase");
+    expect(result.stderr).toContain(".from(");
+    await rm(file);
+  });
+
+  it("MUTATION 2bis (contrôle) : .from( est légitime côté serveur (rôle de service)", async () => {
+    const file = path.join(sandbox, "mut2bis.ts");
+    await writeFile(file, 'const r = await client.from("memoire_declaree").select();\n');
+    const result = await runGuard(sandbox, "serveur");
+    expect(result.code).toBe(0);
     await rm(file);
   });
 

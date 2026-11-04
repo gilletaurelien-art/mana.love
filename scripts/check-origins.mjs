@@ -11,8 +11,18 @@
  *   jamais la base ;
  * - la conversation parle à ask-mana / mana-chat, jamais à l'API Mistral
  *   depuis le client ;
- * - aucune occurrence de supabase ni de rpc( côté src/ : une fuite par
- *   RPC est impossible là où il n'y a pas de RPC.
+ * - aucune occurrence de rpc( nulle part : une fuite par RPC est
+ *   impossible là où il n'y a pas de RPC.
+ *
+ * 🔴 RÉVISÉ (4/11) — compte + mémoire déclarée, décidés par le fondateur :
+ *   le client DOIT pouvoir utiliser le SDK Supabase pour l'AUTHENTIFICATION
+ *   (lien magique) — c'est le point d'entrée normal de ce SDK côté
+ *   navigateur, et l'interdire reviendrait à interdire le compte. Ce qui
+ *   reste interdit côté src/, c'est l'ACCÈS AUX DONNÉES : `.from(` (lire ou
+ *   écrire une table directement depuis le navigateur). Seul `server/`,
+ *   avec le rôle de service, lit/écrit la mémoire déclarée — c'est
+ *   l'absence de policy INSERT pour `authenticated` (migration SQL) qui
+ *   porte cette garantie côté base ; ce garde la porte côté code.
  */
 
 import { readdir, readFile } from "node:fs/promises";
@@ -49,7 +59,22 @@ const ORIGINES_CDN = new Set([
   "https://cdn.mana.bzh",
 ]);
 
-const MOTS_INTERDITS = ["supabase", "rpc("];
+/** Interdit PARTOUT, app comme serveur : aucune fonction RPC, jamais. */
+const MOTS_INTERDITS_PARTOUT = ["rpc("];
+
+/**
+ * Interdit UNIQUEMENT côté app (src/) : l'accès aux données elles-mêmes —
+ * la méthode du SDK Supabase pour lire/écrire une table, par un identifiant
+ * qui commence par une minuscule (`client`, `supabase`, `db`…). C'est elle
+ * qui ouvrirait la fuite, pas le SDK lui-même (nécessaire à
+ * l'authentification). Légitime côté server/ (rôle de service).
+ *
+ * ⚠️ PAS une simple sous-chaîne : `Array.from(`/`Buffer.from(` sont des
+ * méthodes JS natives, toujours sur un identifiant qui commence par une
+ * MAJUSCULE — la regex l'exclut explicitement, sinon tout le code qui
+ * clone un tableau échouerait le garde.
+ */
+const MOTIFS_INTERDITS_APP = [/\b[a-z_$][\w$]*\.from\(/];
 
 async function* fichiers(dir) {
   for (const entry of await readdir(dir, { withFileTypes: true })) {
@@ -99,10 +124,19 @@ const mode = args.includes("--serveur") ? "serveur" : "app";
 for await (const fichier of fichiers(racine)) {
   const contenu = await readFile(fichier, "utf-8");
 
-  for (const mot of MOTS_INTERDITS) {
+  for (const mot of MOTS_INTERDITS_PARTOUT) {
     if (contenu.includes(mot)) {
       console.error(`⛔ ${path.relative(".", fichier)} contient « ${mot} » — interdit.`);
       echecs++;
+    }
+  }
+  if (mode === "app") {
+    for (const motif of MOTIFS_INTERDITS_APP) {
+      const trouve = contenu.match(motif);
+      if (trouve) {
+        console.error(`⛔ ${path.relative(".", fichier)} contient « ${trouve[0]} » — accès aux données interdit côté app.`);
+        echecs++;
+      }
     }
   }
 

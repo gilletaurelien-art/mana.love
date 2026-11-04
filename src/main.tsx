@@ -5,6 +5,7 @@ import PageShell from "@/components/PageShell";
 import { ProgressionProvider } from "@/app/ProgressionContext";
 import { ChatProviderProvider } from "@/app/ChatProviderContext";
 import { LanguageProvider } from "@/app/LanguageContext";
+import { AuthProvider } from "@/app/AuthContext";
 import { installerPhaseTempsReel } from "@/components/AtmosphereTemps";
 import HomeScreen from "@/features/home/HomeScreen";
 import ChatScreen from "@/features/chat/ChatScreen";
@@ -16,6 +17,7 @@ import SleepScreen from "@/features/modes/SleepScreen";
 import ActionScreen from "@/features/modes/ActionScreen";
 import RadioScreen from "@/features/modes/RadioScreen";
 import PrivacyScreen from "@/features/privacy/PrivacyScreen";
+import AccountScreen from "@/features/account/AccountScreen";
 import "@/styles/tokens.css";
 import "@/styles/components.css";
 import "@/components/nav.css";
@@ -27,6 +29,7 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <LanguageProvider>
+      <AuthProvider>
       <ProgressionProvider>
         <ChatProviderProvider>
           <PageShell>
@@ -40,12 +43,14 @@ createRoot(document.getElementById("root")!).render(
               <Route path="/sommeil" element={<SleepScreen />} />
               <Route path="/action" element={<ActionScreen />} />
               <Route path="/ecouter" element={<RadioScreen />} />
+              <Route path="/compte" element={<AccountScreen />} />
               <Route path="/confidentialite" element={<PrivacyScreen />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </PageShell>
         </ChatProviderProvider>
       </ProgressionProvider>
+      </AuthProvider>
       </LanguageProvider>
     </BrowserRouter>
   </StrictMode>

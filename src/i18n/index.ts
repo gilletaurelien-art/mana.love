@@ -21,6 +21,7 @@ export type CleI18n =
   | "nav.explorer"
   | "nav.univers"
   | "nav.ecouter"
+  | "nav.compte"
   | "home.promise"
   | "home.door.talk"
   | "home.door.talkDesc"
@@ -54,6 +55,7 @@ export const FR: Record<CleI18n, string> = {
   "nav.explorer": "Explorer",
   "nav.univers": "Univers",
   "nav.ecouter": "Écouter",
+  "nav.compte": "Compte",
   "home.promise": "Aimer la vie.",
   "home.door.talk": "Parler avec MANA",
   "home.door.talkDesc": "Posez ce qui vous habite. MANA écoute.",
@@ -88,6 +90,7 @@ const EN: Partial<Record<CleI18n, string>> = {
   "nav.explorer": "Explore",
   "nav.univers": "Universes",
   "nav.ecouter": "Listen",
+  "nav.compte": "Account",
   "home.promise": "To love life.",
   "home.door.talk": "Talk with MANA",
   "home.door.talkDesc": "Share what moves you. MANA listens.",

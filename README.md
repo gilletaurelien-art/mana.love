@@ -178,6 +178,28 @@ alerte proactive, aucune notification, aucun déclenchement automatique
 d'une suggestion dans le chat. Deux premiers pas vers « l'agent qui agit
 sur l'exploration », pas la fin du chemin.
 
+### Compte (lien magique) — client prêt, projet en attente
+
+`/compte` affiche un formulaire email → lien de connexion (Supabase Auth,
+aucun mot de passe), via `src/infrastructure/supabaseAuth.ts` et
+`AuthContext`. ⚠️ **Honnête par construction** : sans
+`VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY`, la page affiche
+« Compte non configuré », jamais un formulaire inerte — ce sont les
+**mêmes** valeurs d'environnement vides qui, aujourd'hui, font qu'aucun
+compte réel n'existe.
+
+🔴 **Le SDK Supabase ne sert ici qu'à l'authentification.** Le garde
+d'origines (`scripts/check-origins.mjs`) interdit désormais, côté app
+UNIQUEMENT, tout accès direct à une table (motif `identifiant.from(`,
+distinct de `Array.from(`/`Buffer.from(` par construction) — la mémoire
+déclarée reste lue/écrite exclusivement par le serveur, avec le rôle de
+service. Vérifié par mutation (le motif a été temporairement élargi à
+`.from(` nu, confirmé qu'`Array.from(`/`Buffer.from(` se seraient alors
+fait refuser à tort, puis restauré).
+
+⚠️ Le SDK ajoute ~220 Ko au bundle (308 Ko → 533 Ko) : non code-splitté
+pour l'instant, chargé même pour qui ne visite jamais `/compte`.
+
 ## Intégrations en attente
 
 1. **Audio (voix, paysages sonores)** — `src/domain/audio.ts` définit
@@ -196,11 +218,11 @@ sur l'exploration », pas la fin du chemin.
    porte le schéma et les règles d'accès ligne par ligne — **vérifiées par
    un test d'isolation réel** (deux comptes, chacun ne peut lire, modifier
    ni supprimer que son propre souvenir ; l'écriture directe depuis un
-   compte est refusée, seul le serveur écrit). ⚠️ Rien de tout cela n'est
-   déployé : aucun projet n'est provisionné, aucune variable d'environnement
-   n'existe pour s'y connecter, et il n'y a encore aucun écran de connexion
-   (lien magique) ni logique client pour lire/écrire via ce schéma. C'est
-   une décision qui ne se prend pas depuis un dépôt de code : le fondateur
+   compte est refusée, seul le serveur écrit). L'écran de connexion (lien
+   magique, `/compte`) existe désormais — voir « Compte » ci-dessus. ⚠️
+   Rien de tout cela n'est déployé : aucun projet n'est provisionné,
+   aucune variable d'environnement n'existe pour s'y connecter. C'est une
+   décision qui ne se prend pas depuis un dépôt de code : le fondateur
    crée le projet, et seulement alors les identifiants (URL + clé) peuvent
    être posés en variables d'environnement comme `MISTRAL_API_KEY` l'est
    déjà, et la migration appliquée.
