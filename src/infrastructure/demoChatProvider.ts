@@ -1,5 +1,6 @@
 import type { ChatProvider, ChatCompletionInput, ProviderReply } from "@/domain/chat";
 import type { PersonalityConfig } from "@/domain/personalities";
+import { detecterDetresse } from "@/domain/detresse";
 
 /**
  * Offline demonstration provider.
@@ -7,6 +8,12 @@ import type { PersonalityConfig } from "@/domain/personalities";
  * IMPORTANT: this provider produces clearly-labeled, rule-based responses.
  * It never fakes being a real model. All its replies are marked
  * `isSimulated: true`, and the UI shows the demo mode banner.
+ *
+ * 🔴 Ce fournisseur ne passe jamais par le serveur (c'est tout son intérêt :
+ * aucun backend requis). La détection de détresse de server/chat.ts n'est
+ * donc jamais atteinte ici — elle est répétée ci-dessous. Elle doit rester
+ * identique dans les deux fournisseurs : le mode démo n'est pas une raison
+ * pour qu'un message de crise reste sans réponse.
  */
 
 function buildReply(
@@ -37,6 +44,12 @@ export const demoChatProvider: ChatProvider = {
     const lastUser = [...messages].reverse().find((m) => m.role === "user");
     const userCount = messages.filter((m) => m.role === "user").length;
     await new Promise((r) => setTimeout(r, 450));
+
+    const crise = lastUser ? detecterDetresse(lastUser.text) : null;
+    if (crise) {
+      return { text: crise.texte, isSimulated: true };
+    }
+
     return {
       text: buildReply(personality, lastUser?.text ?? "", userCount),
       isSimulated: true,
